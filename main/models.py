@@ -10,6 +10,10 @@ class Product(models.Model):
     category = models.CharField(max_length=100)
     is_featured = models.BooleanField(default=False)
 
+    #atribut opsional
+    size = models.CharField(max_length=20, blank=True)      # S, M, L, XL
+    stock = models.IntegerField(default=0)
+
 
 def __str__(self):
     return f"{self.name} ({self.team})"
