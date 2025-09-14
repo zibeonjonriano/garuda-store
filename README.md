@@ -372,17 +372,17 @@ NPM   : 2406355634
 
     1. JSON
     `http://127.0.0.1:8000/products/json/` 
-    ![json](./products_json_SS_POSTMAN.png)
+![json](./products_json_SS_POSTMAN.png)
 
     2. XMl
     `http://127.0.0.1:8000/products/xml/`
-    ![xml](./products_xml_SS_POSTMAN.png)
+![xml](./products_xml_SS_POSTMAN.png)
 
     3. JSON by id
     `http://127.0.0.1:8000/products/json/1`
-    ![json_by_id](./products_json_by_id_SS_POSTMAN.png)
+![json_by_id](./products_json_by_id_SS_POSTMAN.png)
 
     4. XML by id
     `http://127.0.0.1:8000/products/xml/1`
-    ![xml_by_id](./products_xml_by_id_SS_POSTMAN.png)
+![xml_by_id](./products_xml_by_id_SS_POSTMAN.png)
         
