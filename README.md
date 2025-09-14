@@ -360,6 +360,11 @@ NPM   : 2406355634
         path("products/<int:id>/", product_detail, name="product_detail"),
         path("products/add/", add_product, name="add_product"),
 
+    10. Menambahkan daftar domain web ke `settings.py` yang ada di folder ROOT project supaya user dapat melakukan "Add Product" (Pengisian Form) melalui domain tersebut karena berasal dari sumber yang terpercaya.
+            CSRF_TRUSTED_ORIGINS = [
+                "https://zibeon-jonriano-garudastore.pbp.cs.ui.ac.id"
+            ]
+
 ## 6. Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?
     Untuk saat ini belum ada.
 
