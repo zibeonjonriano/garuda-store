@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Add Product</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <button type="submit">Submit</button>
+</form>
+<a href="{% url 'main:show_main' %}"><button>Back</button></a>
+
+{% endblock content %}
