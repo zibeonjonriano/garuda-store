@@ -9,4 +9,10 @@
 <br>
 <br>
 <a href="{% url 'main:show_main' %}"><button>Back</button></a>
+
+{% if product.user %}
+    <p>Seller: {{ product.user.username }}</p>
+{% else %}
+    <p>Seller: Anonymous</p>
+{% endif %}
 {% endblock content %}

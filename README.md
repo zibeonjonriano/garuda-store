@@ -386,3 +386,376 @@ NPM   : 2406355634
     `http://127.0.0.1:8000/products/xml/1`
 ![xml_by_id](./products_xml_by_id_SS_POSTMAN.png)
         
+
+---
+# Tugas 4: Implementasi Autentikasi, Session, dan Cookies pada Django
+
+## 1. Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
+
+AuthenticationForm adalah form bawaan Django yang disediakan di django.contrib.auth.forms untuk menangani proses login. Form ini meminta username dan password, lalu memvalidasi apakah pasangan kredensial tersebut sesuai dengan user yang terdaftar di database.
+
+Kelebihan :
+-Sudah terintegrasi penuh dengan sistem autentikasi Django.
+-Secara otomatis melakukan validasi username dan password.
+-Mudah digunakan, cukup import dan panggil dalam view.
+-Bisa di-customize jika ingin menambahkan field lain (misalnya email).
+
+Kekurangan :
+-Terbatas pada field bawaan (username & password). Kalau butuh login dengan cara lain (misal nomor HP, OTP, atau social login), perlu menulis form custom.
+-Pesan error standar (default) kadang perlu dimodifikasi agar lebih ramah pengguna.
+
+## 2.  Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
+
+**Autentikasi** merupakan proses **verifikasi identitas** pengguna (contohnya: apakah username & password benar). Seperti menjawab pertanyaan: “Kamu siapa?”. 
+
+Implementasi Autentikasi di Django dengan menggunakan sistem login/logout dengan authenticate(), login(), logout(), dan AuthenticationForm.
+    
+Sedangkan **Otorisasi** merupakan proses **pemberian izin** setelah identitas diverifikasi (contohnya: apakah user boleh mengakses halaman admin). Seperti menjawab pertanyaan: “Kamu boleh melakukan apa?”
+
+Implementasi Otorisasi di Django dengan menggunakan sistem permissions dan groups.
+-Bisa pakai decorator seperti @login_required, @permission_required, atau user.is_staff / user.is_superuser.
+-Middleware AuthenticationMiddleware otomatis melampirkan objek request.user ke setiap request.
+
+## 3. Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+
+### Cookie
+Cookies adalah data kecil yang disimpan di browser user dan dikirim bersama setiap request ke server.
+
+**Kelebihan**
+-Sederhana dan langsung → Mudah digunakan untuk menyimpan data sederhana (misalnya preferensi bahasa, dark/light mode).
+-Persisten → Bisa bertahan di browser meskipun user menutup aplikasi/web, tergantung expiry.
+-Dapat diakses client-side → JavaScript bisa membaca/mengatur cookies (jika tidak diberi flag HttpOnly).
+-Tidak perlu server-side storage → Semua data ada di browser, sehingga tidak membebani server.
+
+**Kekurangan**
+-Terbatas ukuran → Umumnya hanya 4KB per cookie.
+-Dikirim di setiap request → Membebani jaringan karena ikut dikirim di header HTTP.
+-Keamanan rendah → Rentan terhadap pencurian data (misalnya melalui XSS) jika tidak diamankan dengan HttpOnly, Secure, SameSite.
+-Mudah dimanipulasi user → Karena tersimpan di client, user bisa mengubah isinya.
+
+### Session
+Session adalah data state yang disimpan di server, biasanya hanya disimpan identifier (session ID) di browser (misalnya lewat cookies atau URL).
+
+**Kelebihan**
+-Lebih aman → Data penting disimpan di server, bukan di browser.
+-Mendukung data lebih besar/kompleks → Tidak terbatas 4KB seperti cookie.
+-Tidak dikirim di setiap request (hanya session ID) → Lebih efisien daripada menyimpan semua data di cookies.
+-Kontrol penuh di server → Admin bisa menghapus atau memodifikasi session kapan saja.
+
+**Kekurangan**
+-Membebani server → Karena semua data user disimpan di server-side memory/database.
+-Tidak persisten tanpa konfigurasi tambahan → Session biasanya hilang saat browser ditutup atau setelah idle timeout.
+-Butuh mekanisme tracking → Biasanya melalui session ID di cookies; jika bocor (session hijacking), akun bisa diambil alih.
+-Skalabilitas sulit → Pada aplikasi besar, harus ada mekanisme penyimpanan terdistribusi (misalnya Redis, Memcached) agar session bisa diakses di banyak server.
+
+## 4.  Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
+
+**Tidak sepenuhnya aman**
+Cookies punya beberapa risiko keamanan:
+-Session hijacking (pencurian session ID).
+-XSS (Cross-Site Scripting) bisa mencuri cookie.
+-CSRF (Cross-Site Request Forgery) bisa memanfaatkan cookie aktif.
+
+Namun risiko tersebut bisa ditangani dengan ini:
+- `SESSION_COOKIE_HTTPONLY = True`  
+  → Mencegah cookie session diakses melalui JavaScript (lebih aman terhadap XSS).
+
+- `SESSION_COOKIE_SECURE = True`  
+  → Membuat cookie hanya dikirim melalui koneksi HTTPS, sehingga tidak bocor lewat HTTP.
+
+- `CSRF_COOKIE_HTTPONLY = True` + `CSRF_COOKIE_SECURE = True`  
+  → Melindungi CSRF token agar tidak bisa diambil via JavaScript dan hanya dikirim lewat HTTPS.
+
+- **Middleware**:  
+  `CsrfViewMiddleware`  
+  → Secara otomatis memvalidasi token CSRF di setiap request `POST`, sehingga mencegah serangan CSRF.
+
+## 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+
+### 1. Membuat fungsi dan form registrasi, buka views.py lalu tambahkan
+`from django.contrib.auth.forms import UserCreationForm`
+`from django.contrib import messages`
+```
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+```
+
+### 2. Buat register.html di main/templates
+```
+<!-- main\templates\register.html -->
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Register</title>
+{% endblock meta %}
+
+{% block content %}
+
+<div>
+  <h1>Register</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input type="submit" name="submit" value="Daftar" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+{% endblock content %}
+```
+
+### 3. Lalu melakukan routing fungsi register ke urls.py 
+`from main.views import register`
+```
+urlpatterns = [
+    ...
+    path('register/', register, name='register'),
+]
+```
+
+### 4. Membuat fungsi login, buka views.py lalu tambahkan
+`from django.contrib.auth.forms import UserCreationForm, AuthenticationForm`
+`from django.contrib.auth import authenticate, login`
+
+### 5. Tambahkan funsgi login_user ke dalam views.py yang berfungsi mengautentifikasi pengguna yang ingin login.
+```
+def login_user(request):
+   if request.method == 'POST':
+      form = AuthenticationForm(data=request.POST)
+
+      if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('main:show_main')
+
+   else:
+      form = AuthenticationForm(request)
+   context = {'form': form}
+   return render(request, 'login.html', context)
+```
+
+### 6. buat login.html di main/templates seperti :
+```
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="login">
+  <h1>Login</h1>
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input class="btn login_btn" type="submit" value="Login" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %} Don't have an account yet?
+  <a href="{% url 'main:register' %}">Register Now</a>
+</div>
+
+{% endblock content %}
+```
+
+### 7. Lakukan routing fungsi login_user ke urls.py dengan tambahkan :
+
+`from main.views import login_user`
+```
+urlpatterns = [
+   ...
+   path('login/', login_user, name='login'),
+]
+```
+
+### 8. Membuat fungsi logout_user di views.py dengan mengimport
+`from django.contrib.auth import authenticate, login, logout` dan buat fungsinya seperti:
+```
+def logout_user(request):
+    logout(request)
+    return redirect('main:login')
+```
+
+### 9. Tambahkan button logout di main.html
+```
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+```
+
+### 10.Lakukan routing fungsi logout_user ke urls.py dengan 
+`from main.views import logout_user`
+```
+urlpatterns = [
+   ...
+   path('logout/', logout_user, name='logout'),
+]
+```
+
+### 11. Menrestriksi halaman main dan detail product dengan menambahkan import 
+`from django.contrib.auth.decorators import login_required`
+
+### 12. Tambahkan decorator `@login_required(login_url='/login')` diatas setiap fungsi yang memerlukan auntetikasi login, jadi halaman tsb hanya bisa diakses oleh pengguna saat sudah login 
+
+### 14. Menggunakan data dari Cookies, pertama-tama bukak views.py lalu tambahkan
+```
+import datetime
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+```
+
+### 15. lalu ubah kode di fungsi login_user untuk menyimpan last_login yang berisi timestamp terakhir kali pengguna melakukan login. Kita dapat memperoleh ini dengan mengganti kode yang ada pada blok if form.is_valid() menjadi seperti berikut.
+```
+if form.is_valid():
+    user = form.get_user()
+    login(request, user)
+    response = HttpResponseRedirect(reverse("main:show_main"))
+    response.set_cookie('last_login', str(datetime.datetime.now()))
+    return response
+```
+
+### 16. Pada fungsi show_main, tambahkan potongan kode 'last_login': request.COOKIES['last_login'] ke dalam variabel context. 
+```
+context = {
+        'app_name': "Garuda Store",
+        'student_name': "Zibeon Jonriano Wisnumoerti",
+        'class_name': "PBP D",
+        'products': products,
+        'last_login': request.COOKIES.get('last_login', 'Never'),
+    }
+```
+
+### 17. Ubah fungsi logout_user untuk mengapus cookie last_login setelah melakukan logout
+```
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+```
+lalu setelah itu menambahkan potongan kode di main.html pada main/templates 
+```
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+```
+
+### 18. Menghubungkakn models Product dengan User, pertama-tama dengan mengimport kode ini di models.py 
+```
+from django.contrib.auth.models import User
+```
+
+### 19. Tambahkan potongan kode berikut pada models Product
+```
+class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) # tambahkan ini
+```
+
+### 20 Buka views.pydan ubah fungsi add_product menjadi seperti ini
+```
+@login_required(login_url='/login')
+def add_product(request):
+    form = ProductForm(request.POST or None, request.FILES or None)  # jika ada field file seperti thumbnail
+
+    if form.is_valid() and request.method == "POST":
+        product = form.save(commit=False)      # jangan langsung save
+        product.user = request.user           # set owner sesuai user yang login
+        product.save()                         # baru save ke DB
+        return redirect('main:show_main')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, "add_product.html", context)
+```
+
+### 21. Memodifikasi show_main sehingga menjadi seperti ini :
+```
+@login_required(login_url='/login')
+def show_main(request):
+    filter_type = request.GET.get("filter", "all")  # default 'all'
+
+    if filter_type == "all":
+        products = Product.objects.all()
+    else : 
+        products = Product.objects.filter(user=request.user)
+
+    context = {
+        'app_name': "Garuda Store",
+        'student_name': "Zibeon Jonriano Wisnumoerti",
+        'class_name': "PBP D",
+        'products': products,
+        'last_login': request.COOKIES.get('last_login', 'Never'),
+    }
+    return render(request, "main.html", context)
+
+```
+
+### 22. Tambahkan block code dibawah ini untuk menerapkan filter product di main.html
+```
+<a href="?filter=all">
+    <button type="button">All Products</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Products</button>
+</a> 
+```
+
+### 23. Selanjutnya saya menampilkan nama seller di setiap product details di product yag dibuat olehnya dengan menambah kode berikut
+```
+
+<!-- Tambahkan kode ini -->
+{% if product.user %}
+    <p>Seller: {{ product.user.username }}</p>
+{% else %}
+    <p>Seller: Anonymous</p>
+{% endif %}
+{% endblock content %}
+```
+
+### 24. Selanjutnya saya jug amenampilkan informasi nama pengguna yang sedang login di main.html dengan menambah kode ini
+```
+{% if request.user.is_authenticated %}
+    <h2>Hallo, {{ request.user.username }}!</h2>
+{% else %}
+    <h2>Hallo, Guest!</h2>
+{% endif %}
+```
+kode ini ditambahkan persis diatas informasi sesi login terakhir.
+
+### 25. Setelah selesai saya dapat me-run server dengan python manage.py runserver
+
+### 26. Membuat 2 akun baru dan masing masing membuat 3 product baru.

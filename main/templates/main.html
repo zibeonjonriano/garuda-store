@@ -12,6 +12,17 @@
 <a href="{% url 'main:add_product' %}"><button>Tambah Produk</button></a>
 <a href="{% url 'main:products_json' %}"><button>Semua Produk (JSON)</button></a>
 <a href="{% url 'main:products_xml' %}"><button>Semua Produk (XML)</button></a>
+<a href="{% url 'main:logout' %}"><button>Logout</button></a>
+
+{% if request.user.is_authenticated %}
+    <h2>Hallo, {{ request.user.username }}!</h2>
+{% else %}
+    <h2>Hallo, Guest!</h2>
+{% endif %}
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
+<a href="?filter=all"><button type="button">All Products</button></a>
+<a href="?filter=my"><button type="button">My Products</button></a> 
 
 <hr>
 

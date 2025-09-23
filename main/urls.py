@@ -1,6 +1,6 @@
 # main/urls.py
 from django.urls import path
-from main.views import show_main, products_json, products_xml, product_json_by_id, product_xml_by_id, product_detail, add_product
+from main.views import show_main, products_json, products_xml, product_json_by_id, product_xml_by_id, product_detail, add_product, register, login_user, logout_user
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -14,4 +14,7 @@ urlpatterns = [
     path("products/xml/<int:id>/", product_xml_by_id, name="product_xml_by_id"),
     path("products/<int:id>/", product_detail, name="product_detail"),
     path("products/add/", add_product, name="add_product"),
+    path('register/', register, name='register'),
+    path('login/', login_user, name='login'),
+    path('logout/', logout_user, name='logout'),
 ] 
