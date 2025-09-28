@@ -15,12 +15,17 @@ from django.urls import reverse
 
 @login_required(login_url='/login')
 def show_main(request):
-    filter_type = request.GET.get("filter", "all")  # default 'all'
+    category_filter = request.GET.get("category", "all")  # kategori
+    owner_filter = request.GET.get("owner", "all")        # all / my
 
-    if filter_type == "all":
-        products = Product.objects.all()
-    else : 
-        products = Product.objects.filter(user=request.user)
+    products = Product.objects.all()
+    # Filter berdasarkan kategori
+    if category_filter != "all":
+        products = products.filter(category=category_filter)
+
+    # Filter berdasarkan owner
+    if owner_filter == "my":
+        products = products.filter(user=request.user)
 
     context = {
         'app_name': "Garuda Store",
@@ -28,6 +33,9 @@ def show_main(request):
         'class_name': "PBP D",
         'products': products,
         'last_login': request.COOKIES.get('last_login', 'Never'),
+        'categories': Product.CATEGORY_CHOICES,  # semua kategori
+        'current_category': category_filter,
+        'current_owner': owner_filter
     }
     return render(request, "main.html", context)
 
@@ -73,6 +81,7 @@ def add_product(request):
 @login_required(login_url='/login')
 def product_detail(request, id):
     product = get_object_or_404(Product, pk=id)
+    product.increment_views()  #product.increment_views() digunakan untuk menambah jumlah views pada berita tersebut.
 
     context = {
         'product': product
@@ -113,3 +122,22 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+@login_required(login_url='/login')
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
