@@ -1043,26 +1043,33 @@ else:
 
 4. Menambahkan custom styling ke global.css
 ```
+body {
+    background-color: #d0cec1;
+}
+
+* {
+    background-color: transparent;
+}
 
 .form-style form input, form textarea, form select {
     width: 100%;
     padding: 0.5rem;
-    border: 2px solid #bcbcbc;
+    border: 2px solid #bbff00;
     border-radius: 0.375rem;
 }
 .form-style form input:focus, form textarea:focus, form select:focus {
     outline: none;
-    border-color: #8b16a3;
-    box-shadow: 0 0 0 3px #8b16a3;
+    border-color: #b3f300;
+    box-shadow: 0 0 0 3px #b3f300;
 }
 
 .form-style input[type="checkbox"] {
     width: 1.25rem;
     height: 1.25rem;
     padding: 0;
-    border: 2px solid #d1d5db;
+    border: 2px solid #deff82;
     border-radius: 0.375rem;
-    background-color: white;
+    background-color: #1f2937;
     cursor: pointer;
     position: relative;
     appearance: none;
@@ -1071,8 +1078,8 @@ else:
 }
 
 .form-style input[type="checkbox"]:checked {
-    background-color:#8b16a3;
-    border-color:#8b16a3;
+    background-color: #b3f300;
+    border-color: #b3f300;
 }
 
 .form-style input[type="checkbox"]:checked::after {
@@ -1081,14 +1088,14 @@ else:
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: white;
+    color: #1f2937;
     font-weight: bold;
     font-size: 0.875rem;
 }
 
 .form-style input[type="checkbox"]:focus {
     outline: none;
-    border-color:#8b16a3;
+    border-color:#b3f300;
     box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
 }
 ```
@@ -1096,42 +1103,26 @@ else:
 ### 5. Buatlah navigation bar (navbar) untuk fitur-fitur pada aplikasi yang responsive terhadap perbedaan ukuran device, khususnya mobile dan desktop.
 1. Dengan kode dibawah ini, saya juga sudah menyesuaikan peletakan link category di navbar menggunakan dropdown option dikarenakan katgori produk dalam toko sayta lumayan banyak. Lalu juga saya telah menyesuaikan tampilan navbar di mobile app.
 ```
-<nav class="fixed top-0 left-0 w-full bg-white border-b border-gray-200 shadow-sm z-50">
+<nav class="fixed top-0 left-0 w-full bg-[#010101] border-white shadow-xg z-50 border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center">
-          <h1 class="text-xl font-semibold text-gray-900">
-            <span class="text-purple-600">Garuda</span> Store
+          <h1 class="text-xl font-semibold text-white">
+            <span class="text-[#b3f300]">Garuda</span> Store
           </h1>
         </div>
         
         <!-- Desktop Navigation -->
-        <div class="hidden md:flex items-center space-x-8">
-          <a href="/" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+        <div class="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
+          <a href="/" class="text-white hover:text-[#b3f300] font-medium transition-colors">
             Home
           </a>
-          <a href="{% url 'main:add_product' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+          <a href="{% url 'main:add_product' %}" class="text-white hover:text-[#b3f300] font-medium transition-colors">
             Add Product
           </a>
         </div>
 
         <div class="hidden md:flex items-center space-x-4">
-
-    <!-- Owner Filter -->
-    <form method="GET" action="{% url 'main:show_main' %}" class="flex items-center space-x-2">
-        <select name="owner" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm">
-        <option value="all" {% if current_owner == "all" %}selected{% endif %}>All Products</option>
-        <option value="my" {% if current_owner == "my" %}selected{% endif %}>My Products</option>
-        </select>
-
-        <!-- Category Filter -->
-        <select name="category" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm">
-        <option value="all" {% if current_category == "all" %}selected{% endif %}>All Categories</option>
-        {% for key, value in categories %}
-            <option value="{{ key }}" {% if current_category == key %}selected{% endif %}>{{ value }}</option>
-        {% endfor %}
-        </select>
-    </form>
 
     </div>
         
@@ -1139,8 +1130,8 @@ else:
         <div class="hidden md:flex items-center space-x-6">
           {% if user.is_authenticated %}
             <div class="text-right">
-              <div class="text-sm font-medium text-gray-900">{{ name|default:user.username }}</div>
-              <div class="text-xs text-gray-500">{{ student_name|default:"Student" }} - {{ class_name|default:"Class" }}</div>
+              <div class="text-sm font-medium text-white">{{ name|default:user.username }}</div>
+              <div class="text-xs text-gray-300">{{ student_name|default:"Student" }} - {{ class_name|default:"Class" }}</div>
             </div>
             <a href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">
               Logout
@@ -1149,7 +1140,7 @@ else:
             <a href="{% url 'main:login' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
               Login
             </a>
-            <a href="{% url 'main:register' %}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-medium transition-colors">
+            <a href="{% url 'main:register' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium transition-colors">
               Register
             </a>
           {% endif %}
@@ -1157,7 +1148,7 @@ else:
         
         <!-- Mobile Menu Button -->
         <div class="md:hidden flex items-center">
-          <button class="mobile-menu-button p-2 text-gray-600 hover:text-gray-900 transition-colors">
+          <button class="mobile-menu-button p-2 text-white hover:text-[#b3f300] transition-colors">
             <span class="sr-only">Open menu</span>
             <div class="w-6 h-6 flex flex-col justify-center items-center">
               <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm"></span>
@@ -1168,16 +1159,15 @@ else:
         </div>
       </div>
     </div>
-
     <!-- Mobile Menu -->
-    <div class="mobile-menu hidden md:hidden bg-white border-t border-gray-200">
+    <div class="mobile-menu hidden md:hidden bg-[#232323] border-t border-gray-200">
       <div class="px-6 py-4 space-y-4">
         <!-- Mobile Navigation Links -->
         <div class="space-y-1">
-            <a href="/" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
+            <a href="/" class="block text-white hover:text-[#b3f300] font-medium py-3 transition-colors">
                 Home
             </a>
-            <a href="{% url 'main:add_product' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
+            <a href="{% url 'main:add_product' %}" class="block text-white hover:text-[#b3f300] font-medium py-3 transition-colors">
                 Add Product
             </a>
 
@@ -1185,7 +1175,7 @@ else:
             <!-- Category Filter as Links -->
             {% for key, value in categories %}
                 <a href="{% url 'main:show_main' %}?category={{ key }}{% if current_owner != 'all' %}&owner={{ current_owner }}{% endif %}" 
-                class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors {% if current_category == key %}font-bold{% endif %}">
+                class="block text-gray-100 hover:text-[#b3f300] font-medium py-3 transition-colors {% if current_category == key %}font-bold{% endif %}">
                 {{ value }}
                 </a>
             {% endfor %}
@@ -1195,8 +1185,8 @@ else:
         <div class="border-t border-gray-200 pt-4">
           {% if user.is_authenticated %}
             <div class="mb-4">
-              <div class="font-medium text-gray-900">{{ name|default:user.username }}</div>
-              <div class="text-sm text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+              <div class="font-medium text-white">{{ name|default:user.username }}</div>
+              <div class="text-sm text-white">{{ student_name|default:"Student" }} - {{ class_name|default:"Class" }}</div>
             </div>
             <a href="{% url 'main:logout' %}" class="block text-red-600 hover:text-red-700 font-medium py-3 transition-colors">
               Logout
@@ -1206,7 +1196,7 @@ else:
               <a href="{% url 'main:login' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
                 Login
               </a>
-              <a href="{% url 'main:register' %}" class="block bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded text-center transition-colors">
+              <a href="{% url 'main:register' %}" class="block bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded text-center transition-colors">
                 Register
               </a>
             </div>
@@ -1237,12 +1227,12 @@ Ubah berkas `login.html` pada subdirektori main/templates menjadi seperti beriku
 {% endblock meta %}
 
 {% block content %}
-<div class="bg-gray-50 w-full min-h-screen flex items-center justify-center p-8">
+<div class="bg-[#232323] w-full min-h-screen flex items-center justify-center p-8">
   <div class="max-w-md w-full">
-    <div class="bg-white rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
+    <div class="bg-[#010101] rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
       <div class="text-center mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">Sign In</h1>
-        <p class="text-gray-600">Welcome back to Garuda Store</p>
+        <h1 class="text-2xl font-bold text-white mb-2">Sign In</h1>
+        <p class="text-white">Welcome back to Garuda Store</p>
       </div>
 
       <!-- Form Errors Display -->
@@ -1274,30 +1264,30 @@ Ubah berkas `login.html` pada subdirektori main/templates menjadi seperti beriku
         {% csrf_token %}
         
         <div>
-          <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+          <label for="username" class="block text-sm font-medium text-white mb-2">Username</label>
           <input 
             id="username" 
             name="username" 
             type="text" 
             required 
-            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-purple-500 transition-colors" 
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors bg-gray-800 text-white placeholder-white" 
             placeholder="Enter your username">
         </div>
 
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+          <label for="password" class="block text-sm font-medium text-white mb-2">Password</label>
           <input 
             id="password" 
             name="password" 
             type="password" 
             required 
-            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-purple-500 transition-colors" 
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors bg-gray-800 text-white placeholder-white" 
             placeholder="Enter your password">
         </div>
 
         <button 
           type="submit" 
-          class="w-full bg-purple-600 text-white font-medium py-3 px-4 rounded-md hover:bg-purple-700 transition-colors">
+          class="w-full bg-[#b3f300] text-black font-medium py-3 px-4 rounded-md hover:bg-[#bfd59f] transition-colors">
           Sign In
         </button>
       </form>
@@ -1310,7 +1300,7 @@ Ubah berkas `login.html` pada subdirektori main/templates menjadi seperti beriku
               class="
                 px-4 py-3 rounded-md text-sm border
                 {% if message.tags == 'success' %}
-                  bg-purple-50 border-purple-200 text-purple-700
+                  bg-green-50 border-green-200 text-green-700
                 {% elif message.tags == 'error' %}
                   bg-red-50 border-red-200 text-red-700
                 {% else %}
@@ -1324,9 +1314,9 @@ Ubah berkas `login.html` pada subdirektori main/templates menjadi seperti beriku
       {% endif %}
 
       <div class="mt-6 text-center pt-6 border-t border-gray-200">
-        <p class="text-gray-500 text-sm">
+        <p class="text-white text-sm">
           Don't have an account? 
-          <a href="{% url 'main:register' %}" class="text-purple-600 hover:text-purple-700 font-medium">
+          <a href="{% url 'main:register' %}" class="text-[#b3f300] hover:text-[#bfd59f] font-medium">
             Register Now
           </a>
         </p>
@@ -1348,12 +1338,12 @@ Ubah berkas `register.html` pada subdirektori main/templates menjadi seperti ber
 
 {% block content %}
 <div class="form-style">
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center p-8">
+  <div class="min-h-screen bg-[#232323] flex items-center justify-center p-8">
     <div class="max-w-md w-full relative z-10">
-      <div class="bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
+      <div class="bg-[#010101] border border-gray-200 rounded-lg p-8 shadow-sm">
       <div class="text-center mb-8">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Join Us</h2>
-        <p class="text-gray-500">Create your Garuda Store account</p>
+        <h2 class="text-2xl font-semibold text-white mb-2">Join Us</h2>
+        <p class="text-white">Create your Garuda Store account</p>
       </div>
 
       <!-- Form Errors Display -->
@@ -1385,41 +1375,42 @@ Ubah berkas `register.html` pada subdirektori main/templates menjadi seperti ber
         {% csrf_token %}
         
         <div>
-          <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+          <label for="username" class="block text-sm font-medium text-white mb-2">Username</label>
           <input 
             id="username" 
             name="username" 
             type="text" 
             required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-purple-500 transition duration-200" 
+            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200 bg-gray-800 text-white placeholder-white" 
             placeholder="Choose a username">
         </div>
 
         <div>
-          <label for="password1" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+          <label for="password1" class="block text-sm font-medium text-white mb-2">Password</label>
           <input 
             id="password1" 
             name="password1" 
             type="password" 
             required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-purple-500 transition duration-200" 
+            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200 bg-gray-800 text-white placeholder-white" 
             placeholder="Create a password">
         </div>
 
         <div>
-          <label for="password2" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+          <label for="password2" class="block text-sm font-medium text-white mb-2">Confirm Password</label>
           <input 
             id="password2" 
             name="password2" 
             type="password" 
             required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-purple-500 transition duration-200" 
+            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200 bg-gray-800 text-white placeholder-white" 
             placeholder="Confirm your password">
         </div>
 
         <button 
           type="submit" 
-          class="w-full bg-purple-600 text-white font-medium py-3 px-4 rounded hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition duration-200">
+          class="w-full bg-[#b3f300] text-black font-medium py-3 px-4 rounded hover:bg-[#bfd59f] focus:outline-none focus:ring-2 focus:ring-[#bfd59f]
+           focus:ring-offset-2 transition duration-200">
           Create Account
         </button>
       </form>
@@ -1432,7 +1423,7 @@ Ubah berkas `register.html` pada subdirektori main/templates menjadi seperti ber
               class="
                 px-4 py-3 rounded text-sm border
                 {% if message.tags == 'success' %}
-                  bg-purple-50 border-purple-200 text-purple-700
+                  bg-green-50 border-green-200 text-green-700
                 {% elif message.tags == 'error' %}
                   bg-red-50 border-red-200 text-red-700
                 {% else %}
@@ -1448,7 +1439,7 @@ Ubah berkas `register.html` pada subdirektori main/templates menjadi seperti ber
       <div class="mt-6 text-center">
         <p class="text-gray-500 text-sm">
           Already have an account? 
-          <a href="{% url 'main:login' %}" class="text-purple-600 hover:text-purple-700 font-medium">
+          <a href="{% url 'main:login' %}" class="text-[#b3f300] hover:text-[#bfd59f] font-medium">
             Sign In
           </a>
         </p>
@@ -1465,7 +1456,7 @@ Buat file `card_product.hrtml` di `main/templates`, ubah juga sedikit kode yang 
 ```
 {% load static %}
 {% load humanize %}
-<article class="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+<article class="bg-[#010101] rounded-lg border border-[#010101] hover:shadow-lg transition-shadow duration-300 overflow-hidden">
   <!-- Thumbnail -->
   <div class="aspect-[16/9] relative overflow-hidden">
     {% if product.thumbnail %}
@@ -1476,7 +1467,7 @@ Buat file `card_product.hrtml` di `main/templates`, ubah juga sedikit kode yang 
 
     <!-- Category Badge -->
     <div class="absolute top-3 left-3">
-      <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-purple-200 text-purple-900">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#bfd59f] text-green">
         {{ product.get_category_display }}
       </span>
     </div>
@@ -1498,7 +1489,7 @@ Buat file `card_product.hrtml` di `main/templates`, ubah juga sedikit kode yang 
 
   <!-- Content -->
   <div class="p-5">
-    <div class="flex items-center text-sm text-gray-500 mb-3">
+    <div class="flex items-center text-sm text-white mb-3">
       <time datetime="{{ product.created_at|date:'c' }}"
         {{ product.created_at|date:"M j, Y" }}
       </time>
@@ -1506,18 +1497,18 @@ Buat file `card_product.hrtml` di `main/templates`, ubah juga sedikit kode yang 
       <span>{{ product.product_views }} views</span>
     </div>
 
-    <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 leading-tight">
-      <a href="{% url 'main:product_detail' product.id %}" class="hover:text-purple-600 transition-colors">
+    <h3 class="text-lg font-bold text-white mb-3 line-clamp-2 leading-tight">
+      <a href="{% url 'main:product_detail' product.id %}" class="hover:text-[#b3f300] transition-colors">
         {{ product.name }}
       </a>
     </h3>
 
     <!-- Price -->
-    <h3 class="text-lg text-purple-600 font-semibold text-sm mb-3">
+    <h3 class="text-xl text-[#b3f300] font-semibold text-sm mb-3">
     Rp {{ product.price|intcomma }}
     </h3>
 
-    <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+    <p class="text-white text-sm leading-relaxed line-clamp-3 mb-4">
       {{ product.description|truncatewords:20 }}
     </p>
 
@@ -1526,12 +1517,12 @@ Buat file `card_product.hrtml` di `main/templates`, ubah juga sedikit kode yang 
       <div class="flex items-center justify-between pt-4 border-t border-gray-100">
         <!-- Check Product as Button -->
         <a href="{% url 'main:product_detail' product.id %}" 
-        class="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition-colors">
+        class="px-4 py-2 bg-[#b3f300] text-black rounded-md text-sm font-medium hover:bg-[#bfd59f] transition-colors">
         Check Product →
         </a>
 
-        <div class="flex space-x-2">
-          <a href="{% url 'main:edit_product' product.id %}" class="text-gray-600 hover:text-gray-700 text-sm transition-colors">
+        <div class="flex space-x-2 ">
+          <a href="{% url 'main:edit_product' product.id %}" class="text-white hover:text-[#bfd59f] text-sm transition-colors">
             Edit
           </a>
           <a href="{% url 'main:delete_product' product.id %}" class="text-red-600 hover:text-red-700 text-sm transition-colors">
@@ -1541,8 +1532,8 @@ Buat file `card_product.hrtml` di `main/templates`, ubah juga sedikit kode yang 
       </div>
     {% else %}
       <div class="pt-4 border-t border-gray-100">
-        <a href="{% url 'main:product_detail' product.id %}" 
-        class="inline-block px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition-colors">
+        <a href="#" 
+        class="inline-block px-4 py-2 bg-[#b3f300] text-black rounded-md text-sm font-medium hover:bg-[#bfd59f] transition-colors">
         Check Product →
         </a>
       </div>
@@ -1551,9 +1542,55 @@ Buat file `card_product.hrtml` di `main/templates`, ubah juga sedikit kode yang 
 </article>
 ```
 
-**4. Jika belum ada product yang dibuat maka saya akan memunculkan `no-product.png` yang disimpan di `static/image` di root project**
+**4. Saya juga mengcustom background color dari input field dan text inputnya dengan memodifikasi `forms.py`, untuk kepentingan styling `add_product.html` dan `edit_product.html`.
+```
+# main/forms.py
+from django import forms
+from .models import Product
 
-**5. Menggunakan `card_product.html` dan `no-product.png` ke template `main.html`**
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ["name","price", "description", "thumbnail", "category", "is_featured", "size", "stock"]
+        widgets = {
+            "name": forms.TextInput(attrs={
+                "class": "bg-gray-800 text-white placeholder-white px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#b3f300] focus:border-transparent",
+                "placeholder": "Enter product name"
+            }),
+            "price": forms.NumberInput(attrs={
+                "class": "bg-gray-800 text-white placeholder-white px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#b3f300] focus:border-transparent",
+                "placeholder": "Enter price"
+            }),
+            "description": forms.Textarea(attrs={
+                "class": "bg-gray-800 text-white placeholder-white px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#b3f300] focus:border-transparent",
+                "placeholder": "Enter product description",
+                "rows": 4
+            }),
+            "thumbnail": forms.URLInput(attrs={
+                "class": "bg-gray-800 text-white placeholder-white px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#b3f300] focus:border-transparent",
+                "placeholder": "Enter thumbnail URL"
+            }),
+            "category": forms.Select(attrs={
+                "class": "bg-gray-800 text-white px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#b3f300] focus:border-transparent",
+            }),
+            "is_featured": forms.CheckboxInput(attrs={
+                "class": "text-[#b3f300] focus:ring-[#b3f300] rounded"
+            }),
+            "size": forms.Select(attrs={
+                "class": "bg-gray-800 text-white px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#b3f300] focus:border-transparent",
+            }),
+            "stock": forms.NumberInput(attrs={
+                "class": "bg-gray-800 text-white placeholder-white px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#b3f300] focus:border-transparent",
+                "placeholder": "Enter stock"
+            }),
+        }
+```
+
+
+
+**5. Jika belum ada product yang dibuat maka saya akan memunculkan `no-product.png` yang disimpan di `static/image` di root project**
+
+**6. Menggunakan `card_product.html` dan `no-product.png` ke template `main.html`**
 hal ini dilakukan supaya daftar produk yang muncul dapat dimanage secara modular di template terpisah dari `main.html`. lalu jika blm ada produk yang dibuat akan memunculkan gambar yang sudah ditentukan.
 ```
 {% extends 'base.html' %}
@@ -1565,42 +1602,55 @@ hal ini dilakukan supaya daftar produk yang muncul dapat dimanage secara modular
 
 {% block content %}
 {% include 'navbar.html' %}
-<div class="bg-gray-50 w-full pt-16 min-h-screen">
+<div class="bg-[#232323] w-full pt-16 min-h-screen">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- Header Section -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Get your favorite football merch in Garuda Store</h1>
-      <p class="text-gray-600">Complete collection of merchandise football team</p>
+      <h1 class="text-4xl font-bold tracking-tight text-white">
+        Your Football Merch Hub
+      </h1>
+      <p class="mt-2 text-lg text-white">
+        Official collections, all in one place
+      </p>
     </div>
 
     <!-- Filter Section -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
-      <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a href="?owner=all" class="{% if current_owner == 'all' %} bg-purple-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium ...">
-        All Product
-        </a>
-        <a href="?owner=my" class="{% if current_owner == 'my' %} bg-purple-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium ...">
-        My Product
-        </a>
+    <div class="flex flex-col text-white sm:flex-row sm:items-center sm:justify-between mb-8 bg-[#242424] rounded-lg p-0 ">
+        <!-- Owner Filter -->
+        <form method="GET" action="{% url 'main:show_main' %}" class="flex items-center space-x-2">
+            <select 
+              name="owner" 
+              onchange="this.form.submit()" 
+              class="border rounded px-2 py-1 text-sm bg-[#010101] text-white focus:bg-white focus:text-black"
+            >
+              <option value="all" {% if current_owner == "all" %}selected{% endif %}>All Products</option>
+              <option value="my" {% if current_owner == "my" %}selected{% endif %}>My Products</option>
+            </select>
 
-      </div>
-      {% if user.is_authenticated %}
-        <div class="text-sm text-gray-500">
-          Last login: {{ last_login }}
-        </div>
-      {% endif %}
+            <!-- Category Filter -->
+            <select 
+              name="category" 
+              onchange="this.form.submit()" 
+              class="border rounded px-2 py-1 text-sm bg-[#010101] text-white focus:bg-white focus:text-black"
+            >
+              <option value="all" {% if current_category == "all" %}selected{% endif %}>All Categories</option>
+              {% for key, value in categories %}
+                <option value="{{ key }}" {% if current_category == key %}selected{% endif %}>{{ value }}</option>
+              {% endfor %}
+            </select>
+        </form>
     </div>
 
     <!-- Product Grid -->
     {% if not products %}
-      <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+      <div class="bg-[#010101] rounded-lg border border-gray-200 p-12 text-center">
         <div class="w-32 h-32 mx-auto mb-4">
           <img src="{% static 'image/no-product.png' %}" alt="No prodyct available" class="w-full h-full object-contain">
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No product found</h3>
-        <p class="text-gray-500 mb-6">Be the first to sell football merch to everyone.</p>
-        <a href="{% url 'main:add_product' %}" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
+        <h3 class="text-lg font-medium text-white mb-2">No product found</h3>
+        <p class="text-white mb-6">Be the first to sell football merch to everyone.</p>
+        <a href="{% url 'main:add_product' %}" class="inline-flex items-center px-4 py-2 bg-[#b3f300] text-black rounded-md hover:bg-[#b3f300] transition-colors">
           Add Product
         </a>
       </div>
@@ -1616,7 +1666,7 @@ hal ini dilakukan supaya daftar produk yang muncul dapat dimanage secara modular
 {% endblock content %}
 ```
 
-**6. Styling halaman Detail Product**
+**7. Styling halaman Detail Product**
 Kurang lebih cara nya sama seperti styling halaman Detail News pada tutorial tapi disini saya melakukan penyesuaian agar atribut pada models bisa terlihat di bagian detail ini, seperti harga, size dan lain lain.
 ```
 {% extends 'base.html' %}
@@ -1629,24 +1679,24 @@ Kurang lebih cara nya sama seperti styling halaman Detail News pada tutorial tap
 {% endblock meta %}
 
 {% block content %}
-<div class="bg-gray-50 w-full min-h-screen">
+<div class="bg-[#232323] w-full min-h-screen">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         <!-- Back Navigation -->
         <div class="mb-6">
-            <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+            <a href="{% url 'main:show_main' %}" class="text-[#b3f300] hover:text-[#bfd59f] font-medium text-2xl transition-colors">
                 ← Back
             </a>
         </div>
         
         <!-- Product Card -->
-        <article class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-md">
+        <article class="bg-[#010101] rounded-lg border border-gray-200 overflow-hidden shadow-md">
             
             <!-- Header -->
             <div class="p-6 sm:p-8">
                 <!-- Category & Tags -->
                 <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-purple-600 text-white">
+                    <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-[#bfd59f] text-green">
                         {{ product.category }}
                     </span>
                     {% if product.is_featured %}
@@ -1661,16 +1711,13 @@ Kurang lebih cara nya sama seperti styling halaman Detail News pada tutorial tap
                     {% endif %}
                 </div>
 
-                <!-- Product Name & Price -->
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mb-2">
+                <!-- Product Name -->
+                <h1 class="text-3xl sm:text-4xl font-bold text-white leading-tight mb-2">
                     {{ product.name }}
                 </h1>
-                <p class="text-xl text-purple-600 font-semibold mb-4">
-                    Rp{{ product.price|intcomma }}
-                </p>
 
                 <!-- Meta Info -->
-                <div class="flex flex-wrap items-center text-sm text-gray-500 gap-4 mb-4">
+                <div class="flex flex-wrap items-center text-sm text-[#b3f300] gap-4 mb-4">
                     <time datetime="{{ product.created_at|date:'c' }}">
                         {{ product.created_at|date:"M j, Y g:i A" }}
                     </time>
@@ -1682,43 +1729,55 @@ Kurang lebih cara nya sama seperti styling halaman Detail News pada tutorial tap
                 </div>
             </div>
 
-            <!-- Featured Image -->
-            {% if product.thumbnail %}
-                <div class="px-6 sm:px-8">
+            <div class="px-6 sm:px-8">
+                <!-- Product Thumbnail -->
+                {% if product.thumbnail %}
                     <img src="{{ product.thumbnail }}" 
-                         alt="{{ product.name }}" 
-                         class="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-lg">
-                </div>
-            {% endif %}
+                        alt="{{ product.name }}" 
+                        class="w-full h-36  sm:h-80 lg:h-96 object-cover rounded-lg mb-4">
+                {% endif %}
+                <!-- Product Price -->
+                <p class="text-3xl text-[#b3f300] font-semibold mb-0">
+                    Rp{{ product.price|intcomma }}
+                </p>
+            </div>
 
-            <!-- Description -->
-            <div class="p-6 sm:p-8">
+            <!--  Product Description -->
+            <div class="p-6 sm:p-8 pt-0">
                 <div class="prose prose-lg max-w-none">
-                    <div class="text-gray-700 leading-relaxed whitespace-pre-line text-base sm:text-lg">
+                    <div class="text-white leading-relaxed whitespace-pre-line text-base sm:text-lg">
+                        <hr>
                         {{ product.description }}
                     </div>
                 </div>
             </div>
 
+
+
             <!-- Seller Info -->
-            <div class="border-t border-gray-200 p-6 sm:p-8 bg-gray-50">
+            <div class="border-t border-gray-200 p-6 sm:p-8 bg-gray-900">
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <div>
-                        <div class="font-medium text-gray-900">
+                        <div class="font-medium text-[#b3f300]">
                             {% if product.user %}
                                 Seller: {{ product.user.username }}
                             {% else %}
                                 Seller: Anonymous
                             {% endif %}
                         </div>
-                        <p class="text-sm text-gray-500">Seller</p>
+                        <p class="text-sm text-gray-50">Seller</p>
+
                     </div>
+                        <a href="{% url 'main:product_detail' product.id %}" 
+                        class="inline-block  px-4 py-2 bg-[#b3f300] text-black rounded-md text-sm font-medium hover:bg-[#bfd59f] transition-colors">
+                        Checkout
+                        </a>
                 </div>
             </div>
 
             <!-- Action Buttons (Optional) -->
             {% if user.is_authenticated and product.user == user %}
-            <div class="border-t border-gray-200 p-6 sm:p-8 bg-gray-50 flex gap-3">
+            <div class="border-t border-gray-200 p-6 sm:p-8 bg-[#010101] flex gap-3">
                 <a href="{% url 'main:edit_product' product.pk %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors">
                     Edit
                 </a>
@@ -1734,7 +1793,7 @@ Kurang lebih cara nya sama seperti styling halaman Detail News pada tutorial tap
 {% endblock content %}
 ```
 
-**7. Styling halaman Add Product**
+**8. Styling halaman Add Product**
 Ubah berkas `add_product.html` pada subdirektori main/templates menjadi seperti berikut:
 ```
 {% extends 'base.html' %}
@@ -1743,28 +1802,28 @@ Ubah berkas `add_product.html` pada subdirektori main/templates menjadi seperti 
 {% endblock meta %}
 
 {% block content %}
-<div class="bg-gray-50 w-full min-h-screen">
+<div class="bg-[#232323] w-full min-h-screen">
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
     <!-- Back Navigation -->
     <div class="mb-6">
-      <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+      <a href="{% url 'main:show_main' %}" class="text-[#b3f300] hover:text-[#bfd59f] font-medium text-2xl transition-colors">
         ← Back
       </a>
     </div>
     
     <!-- Form -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
+    <div class="bg-[#010101] rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
       <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">Add New Product</h1>
-        <p class="text-gray-600">Sell your football merchandise to everyone</p>
+        <h1 class="text-2xl font-bold text-white mb-2">Add New Product</h1>
+        <p class="text-white">Sell your football merchandise to everyone</p>
       </div>
       
       <form method="POST" class="space-y-6">
         {% csrf_token %}
         {% for field in form %}
           <div>
-            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-white mb-2">
               {{ field.label }}
             </label>
             <div class="w-full">
@@ -1780,10 +1839,10 @@ Ubah berkas `add_product.html` pada subdirektori main/templates menjadi seperti 
         {% endfor %}
         
         <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-          <a href="{% url 'main:show_main' %}" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center">
+          <a href="{% url 'main:show_main' %}" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-white rounded-md font-medium hover:bg-gray-500 transition-colors text-center">
             Cancel
           </a>
-          <button type="submit" class="order-1 sm:order-2 flex-1 bg-purple-600 text-white px-6 py-3 rounded-md font-medium hover:bg-purple-700 transition-colors">
+          <button type="submit" class="order-1 sm:order-2 flex-1 bg-[#b3f300] text-black px-6 py-3 rounded-md font-medium hover:bg-[#bfd59f] transition-colors">
             Upload Product
           </button>
         </div>
@@ -1794,7 +1853,7 @@ Ubah berkas `add_product.html` pada subdirektori main/templates menjadi seperti 
 {% endblock %}
 ```
 
-**8. Styling halaman Edit Product**
+**9. Styling halaman Edit Product**
 Ubah berkas `edit_product.html` pada subdirektori main/templates menjadi seperti berikut:
 ```
 {% extends 'base.html' %}
@@ -1805,35 +1864,35 @@ Ubah berkas `edit_product.html` pada subdirektori main/templates menjadi seperti
 {% endblock meta %}
 
 {% block content %}
-<div class="bg-gray-50 w-full min-h-screen">
+<div class="bg-[#232323] w-full min-h-screen">
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
     <!-- Back Navigation -->
     <div class="mb-6">
-      <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+      <a href="{% url 'main:show_main' %}" class="text-[#b3f300] hover:text-[#bfd59f] font-medium text-2xl transition-colors">
         ← Back
       </a>
     </div>
     
     <!-- Form -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
+    <div class="bg-[#010101] rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
       <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">Garuda Store</h1>
-        <p class="text-gray-600">Update your football merchandise to everyone</p>
+        <h1 class="text-2xl font-bold text-white mb-2">Garuda Store</h1>
+        <p class="text-white">Update your football merchandise to everyone</p>
       </div>
       
       <form method="POST" class="space-y-6">
         {% csrf_token %}
         {% for field in form %}
           <div>
-            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-white mb-2">
               {{ field.label }}
             </label>
             <div class="w-full">
               {{ field }}
             </div>
             {% if field.help_text %}
-              <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+              <p class="mt-1 text-sm text-white0">{{ field.help_text }}</p>
             {% endif %}
             {% for error in field.errors %}
               <p class="mt-1 text-sm text-red-600">{{ error }}</p>
@@ -1842,10 +1901,10 @@ Ubah berkas `edit_product.html` pada subdirektori main/templates menjadi seperti
         {% endfor %}
         
         <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-          <a href="{% url 'main:show_main' %}" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center">
+          <a href="{% url 'main:show_main' %}" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-white rounded-md font-medium hover:bg-gray-500 transition-colors text-center">
             Cancel
           </a>
-          <button type="submit" class="order-1 sm:order-2 flex-1 bg-purple-600 text-white px-6 py-3 rounded-md font-medium hover:bg-purple-700 transition-colors">
+          <button type="submit" class="order-1 sm:order-2 flex-1 bg-[#b3f300] text-black px-6 py-3 rounded-md font-medium hover:bg-[#bfd59f] transition-colors">
             Update Product
           </button>
         </div>

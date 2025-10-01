@@ -28,6 +28,7 @@ class Product(models.Model):
     thumbnail = models.URLField()
     category =  models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='no category')
     is_featured = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
     
 
     #atribut opsional

@@ -8,24 +8,24 @@
 {% endblock meta %}
 
 {% block content %}
-<div class="bg-gray-50 w-full min-h-screen">
+<div class="bg-[#232323] w-full min-h-screen">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         <!-- Back Navigation -->
         <div class="mb-6">
-            <a href="{% url 'main:show_main' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+            <a href="{% url 'main:show_main' %}" class="text-[#b3f300] hover:text-[#bfd59f] font-medium text-2xl transition-colors">
                 ← Back
             </a>
         </div>
         
         <!-- Product Card -->
-        <article class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-md">
+        <article class="bg-[#010101] rounded-lg border border-gray-200 overflow-hidden shadow-md">
             
             <!-- Header -->
             <div class="p-6 sm:p-8">
                 <!-- Category & Tags -->
                 <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-purple-600 text-white">
+                    <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-[#bfd59f] text-green">
                         {{ product.category }}
                     </span>
                     {% if product.is_featured %}
@@ -40,16 +40,13 @@
                     {% endif %}
                 </div>
 
-                <!-- Product Name & Price -->
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mb-2">
+                <!-- Product Name -->
+                <h1 class="text-3xl sm:text-4xl font-bold text-white leading-tight mb-2">
                     {{ product.name }}
                 </h1>
-                <p class="text-xl text-purple-600 font-semibold mb-4">
-                    Rp{{ product.price|intcomma }}
-                </p>
 
                 <!-- Meta Info -->
-                <div class="flex flex-wrap items-center text-sm text-gray-500 gap-4 mb-4">
+                <div class="flex flex-wrap items-center text-sm text-[#b3f300] gap-4 mb-4">
                     <time datetime="{{ product.created_at|date:'c' }}">
                         {{ product.created_at|date:"M j, Y g:i A" }}
                     </time>
@@ -61,43 +58,55 @@
                 </div>
             </div>
 
-            <!-- Featured Image -->
-            {% if product.thumbnail %}
-                <div class="px-6 sm:px-8">
+            <div class="px-6 sm:px-8">
+                <!-- Product Thumbnail -->
+                {% if product.thumbnail %}
                     <img src="{{ product.thumbnail }}" 
-                         alt="{{ product.name }}" 
-                         class="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-lg">
-                </div>
-            {% endif %}
+                        alt="{{ product.name }}" 
+                        class="w-full h-36  sm:h-80 lg:h-96 object-cover rounded-lg mb-4">
+                {% endif %}
+                <!-- Product Price -->
+                <p class="text-3xl text-[#b3f300] font-semibold mb-0">
+                    Rp{{ product.price|intcomma }}
+                </p>
+            </div>
 
-            <!-- Description -->
-            <div class="p-6 sm:p-8">
+            <!--  Product Description -->
+            <div class="p-6 sm:p-8 pt-0">
                 <div class="prose prose-lg max-w-none">
-                    <div class="text-gray-700 leading-relaxed whitespace-pre-line text-base sm:text-lg">
+                    <div class="text-white leading-relaxed whitespace-pre-line text-base sm:text-lg">
+                        <hr>
                         {{ product.description }}
                     </div>
                 </div>
             </div>
 
+
+
             <!-- Seller Info -->
-            <div class="border-t border-gray-200 p-6 sm:p-8 bg-gray-50">
+            <div class="border-t border-gray-200 p-6 sm:p-8 bg-gray-900">
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <div>
-                        <div class="font-medium text-gray-900">
+                        <div class="font-medium text-[#b3f300]">
                             {% if product.user %}
                                 Seller: {{ product.user.username }}
                             {% else %}
                                 Seller: Anonymous
                             {% endif %}
                         </div>
-                        <p class="text-sm text-gray-500">Seller</p>
+                        <p class="text-sm text-gray-50">Seller</p>
+
                     </div>
+                        <a href="{% url 'main:product_detail' product.id %}" 
+                        class="inline-block  px-4 py-2 bg-[#b3f300] text-black rounded-md text-sm font-medium hover:bg-[#bfd59f] transition-colors">
+                        Checkout
+                        </a>
                 </div>
             </div>
 
             <!-- Action Buttons (Optional) -->
             {% if user.is_authenticated and product.user == user %}
-            <div class="border-t border-gray-200 p-6 sm:p-8 bg-gray-50 flex gap-3">
+            <div class="border-t border-gray-200 p-6 sm:p-8 bg-[#010101] flex gap-3">
                 <a href="{% url 'main:edit_product' product.pk %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors">
                     Edit
                 </a>

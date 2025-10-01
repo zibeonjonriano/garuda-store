@@ -5,12 +5,12 @@
 {% endblock meta %}
 
 {% block content %}
-<div class="bg-gray-50 w-full min-h-screen flex items-center justify-center p-8">
+<div class="bg-[#232323] w-full min-h-screen flex items-center justify-center p-8">
   <div class="max-w-md w-full">
-    <div class="bg-white rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
+    <div class="bg-[#010101] rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
       <div class="text-center mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">Sign In</h1>
-        <p class="text-gray-600">Welcome back to Garuda Store</p>
+        <h1 class="text-2xl font-bold text-white mb-2">Sign In</h1>
+        <p class="text-white">Welcome back to Garuda Store</p>
       </div>
 
       <!-- Form Errors Display -->
@@ -42,30 +42,30 @@
         {% csrf_token %}
         
         <div>
-          <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+          <label for="username" class="block text-sm font-medium text-white mb-2">Username</label>
           <input 
             id="username" 
             name="username" 
             type="text" 
             required 
-            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-purple-500 transition-colors" 
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors bg-gray-800 text-white placeholder-white" 
             placeholder="Enter your username">
         </div>
 
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+          <label for="password" class="block text-sm font-medium text-white mb-2">Password</label>
           <input 
             id="password" 
             name="password" 
             type="password" 
             required 
-            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-purple-500 transition-colors" 
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors bg-gray-800 text-white placeholder-white" 
             placeholder="Enter your password">
         </div>
 
         <button 
           type="submit" 
-          class="w-full bg-purple-600 text-white font-medium py-3 px-4 rounded-md hover:bg-purple-700 transition-colors">
+          class="w-full bg-[#b3f300] text-black font-medium py-3 px-4 rounded-md hover:bg-[#bfd59f] transition-colors">
           Sign In
         </button>
       </form>
@@ -78,7 +78,7 @@
               class="
                 px-4 py-3 rounded-md text-sm border
                 {% if message.tags == 'success' %}
-                  bg-purple-50 border-purple-200 text-purple-700
+                  bg-green-50 border-green-200 text-green-700
                 {% elif message.tags == 'error' %}
                   bg-red-50 border-red-200 text-red-700
                 {% else %}
@@ -92,9 +92,9 @@
       {% endif %}
 
       <div class="mt-6 text-center pt-6 border-t border-gray-200">
-        <p class="text-gray-500 text-sm">
+        <p class="text-white text-sm">
           Don't have an account? 
-          <a href="{% url 'main:register' %}" class="text-purple-600 hover:text-purple-700 font-medium">
+          <a href="{% url 'main:register' %}" class="text-[#b3f300] hover:text-[#bfd59f] font-medium">
             Register Now
           </a>
         </p>

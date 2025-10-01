@@ -1,6 +1,6 @@
 {% load static %}
 {% load humanize %}
-<article class="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+<article class="bg-[#010101] rounded-lg border border-[#010101] hover:shadow-lg transition-shadow duration-300 overflow-hidden">
   <!-- Thumbnail -->
   <div class="aspect-[16/9] relative overflow-hidden">
     {% if product.thumbnail %}
@@ -11,7 +11,7 @@
 
     <!-- Category Badge -->
     <div class="absolute top-3 left-3">
-      <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-purple-200 text-purple-900">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#bfd59f] text-green">
         {{ product.get_category_display }}
       </span>
     </div>
@@ -33,7 +33,7 @@
 
   <!-- Content -->
   <div class="p-5">
-    <div class="flex items-center text-sm text-gray-500 mb-3">
+    <div class="flex items-center text-sm text-white mb-3">
       <time datetime="{{ product.created_at|date:'c' }}"
         {{ product.created_at|date:"M j, Y" }}
       </time>
@@ -41,18 +41,18 @@
       <span>{{ product.product_views }} views</span>
     </div>
 
-    <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 leading-tight">
-      <a href="{% url 'main:product_detail' product.id %}" class="hover:text-purple-600 transition-colors">
+    <h3 class="text-lg font-bold text-white mb-3 line-clamp-2 leading-tight">
+      <a href="{% url 'main:product_detail' product.id %}" class="hover:text-[#b3f300] transition-colors">
         {{ product.name }}
       </a>
     </h3>
 
     <!-- Price -->
-    <h3 class="text-lg text-purple-600 font-semibold text-sm mb-3">
+    <h3 class="text-xl text-[#b3f300] font-semibold text-sm mb-3">
     Rp {{ product.price|intcomma }}
     </h3>
 
-    <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+    <p class="text-white text-sm leading-relaxed line-clamp-3 mb-4">
       {{ product.description|truncatewords:20 }}
     </p>
 
@@ -61,12 +61,12 @@
       <div class="flex items-center justify-between pt-4 border-t border-gray-100">
         <!-- Check Product as Button -->
         <a href="{% url 'main:product_detail' product.id %}" 
-        class="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition-colors">
+        class="px-4 py-2 bg-[#b3f300] text-black rounded-md text-sm font-medium hover:bg-[#bfd59f] transition-colors">
         Check Product →
         </a>
 
-        <div class="flex space-x-2">
-          <a href="{% url 'main:edit_product' product.id %}" class="text-gray-600 hover:text-gray-700 text-sm transition-colors">
+        <div class="flex space-x-2 ">
+          <a href="{% url 'main:edit_product' product.id %}" class="text-white hover:text-[#bfd59f] text-sm transition-colors">
             Edit
           </a>
           <a href="{% url 'main:delete_product' product.id %}" class="text-red-600 hover:text-red-700 text-sm transition-colors">
@@ -76,8 +76,8 @@
       </div>
     {% else %}
       <div class="pt-4 border-t border-gray-100">
-        <a href="{% url 'main:product_detail' product.id %}" 
-        class="inline-block px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition-colors">
+        <a href="#" 
+        class="inline-block px-4 py-2 bg-[#b3f300] text-black rounded-md text-sm font-medium hover:bg-[#bfd59f] transition-colors">
         Check Product →
         </a>
       </div>
