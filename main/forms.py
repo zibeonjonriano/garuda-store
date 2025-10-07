@@ -1,6 +1,7 @@
 # main/forms.py
 from django import forms
 from .models import Product
+from django.utils.html import strip_tags
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -38,3 +39,11 @@ class ProductForm(forms.ModelForm):
                 "placeholder": "Enter stock"
             }),
         }
+
+    def clean_title(self):
+        title = self.cleaned_data["title"]
+        return strip_tags(title)
+
+    def clean_content(self):
+        content = self.cleaned_data["content"]
+        return strip_tags(content)

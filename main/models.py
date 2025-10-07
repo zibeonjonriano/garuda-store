@@ -26,16 +26,15 @@ class Product(models.Model):
     price = models.IntegerField()
     description = models.TextField()
     thumbnail = models.URLField()
-    category =  models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='no category')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='no category')
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    
 
     #atribut opsional
-    size = models.CharField(max_length=20, choices=SIZE_CHOICES, default='xs')      # S, M, L, XL
+    size = models.CharField(max_length=20, choices=SIZE_CHOICES, default='xs')
     stock = models.IntegerField(default=0)
-
     product_views = models.PositiveIntegerField(default=0)
+
 
 
     def __str__(self):
