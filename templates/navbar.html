@@ -97,7 +97,7 @@
           {% if user.is_authenticated %}
             <div class="mb-4">
               <div class="font-medium text-gray-900">{{ name|default:user.username }}</div>
-              <div class="text-sm text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+              <div class="text-sm text-gray-500">{{ student_name|default:"Student" }} - {{ class_name|default:"Class" }}</div>
             </div>
             <a href="{% url 'main:logout' %}" class="block text-red-400 hover:text-red-700 font-medium py-3 transition-colors">
               Logout

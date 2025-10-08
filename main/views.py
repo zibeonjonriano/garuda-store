@@ -15,6 +15,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
+import json
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -28,7 +29,7 @@ def show_main(request):
 
     # Filter berdasarkan owner
     if owner_filter == "my":
-        produproducy_cts = products.filter(user=request.user)
+        products = products.filter(user=request.user)
 
     context = {
         'app_name': "Garuda Store",
@@ -242,3 +243,110 @@ def add_product_entry_ajax(request):
     new_product.save()
 
     return HttpResponse(b"CREATED", status=201)
+
+
+@csrf_exempt
+@require_POST
+def login_ajax(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username or not password:
+            return JsonResponse({
+                'success': False,
+                'message': 'Username and password are required'
+            }, status=400)
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return JsonResponse({
+                'success': True,
+                'message': f'Welcome back, {user.username}!',
+                'redirect_url': '/'
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid username or password'
+            }, status=401)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)
+
+# AJAX Register
+@csrf_exempt
+@require_POST
+def register_ajax(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        password1 = data.get('password1')
+        password2 = data.get('password2')
+        
+        # Validasi input
+        if not username or not password1 or not password2:
+            return JsonResponse({
+                'success': False,
+                'message': 'All fields are required'
+            }, status=400)
+        
+        if password1 != password2:
+            return JsonResponse({
+                'success': False,
+                'message': 'Passwords do not match'
+            }, status=400)
+        
+        # Cek username sudah ada atau belum
+        from django.contrib.auth.models import User
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({
+                'success': False,
+                'message': 'Username already exists'
+            }, status=400)
+        
+        # Validasi password menggunakan Django validators
+        from django.contrib.auth.password_validation import validate_password
+        from django.core.exceptions import ValidationError
+        
+        try:
+            validate_password(password1)
+        except ValidationError as e:
+            return JsonResponse({
+                'success': False,
+                'message': ' '.join(e.messages)
+            }, status=400)
+        
+        # Create user
+        user = User.objects.create_user(
+            username=username,
+            password=password1
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Account created successfully! Welcome, {username}!',
+            'redirect_url': '/login'
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)

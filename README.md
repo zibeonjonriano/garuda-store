@@ -1914,3 +1914,21 @@ Ubah berkas `edit_product.html` pada subdirektori main/templates menjadi seperti
 </div>
 {% endblock %}
 ```
+
+---
+# Tugas 6: Javascript dan AJAX 
+
+## 1,  Apa perbedaan antara synchronous request dan asynchronous request?
+Perbedaan synchronous dan asynchronous request: Synchronous request membuat browser menunggu hingga server merespon, sehingga halaman tampak "terkunci" sementara menunggu data. Sebaliknya, asynchronous request seperti AJAX memungkinkan browser tetap interaktif karena data dikirim dan diterima di latar belakang tanpa menghentikan aktivitas pengguna.
+
+## 2. Bagaimana AJAX bekerja di Django (alur request–response)?
+Bagaimana AJAX bekerja di Django: Ketika pengguna melakukan aksi, JavaScript mengirim request AJAX ke view Django. View memproses data dan mengembalikan response berupa JSON atau HTML partial. JavaScript kemudian menerima response tersebut dan memperbarui konten halaman secara dinamis tanpa reload penuh.
+
+## 3.  Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+Keuntungan menggunakan AJAX dibanding render biasa: AJAX memungkinkan update konten tertentu tanpa me-refresh seluruh halaman, membuat interaksi lebih cepat dan responsif, mengurangi penggunaan bandwidth, serta mendukung fitur modern seperti loading state, toast notifikasi, dan filter real-time.
+
+## 4.Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+Keamanan AJAX untuk Login dan Register: Untuk menjaga keamanan, perlu menggunakan CSRF token di header request, memvalidasi input di server, mengenkripsi koneksi dengan HTTPS, membatasi percobaan login, dan menghindari mengirim data sensitif dalam response.
+
+## 5.  Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+Pengaruh AJAX terhadap User Experience: AJAX meningkatkan pengalaman pengguna dengan membuat interaksi lebih cepat dan halus, karena perubahan konten terjadi secara langsung tanpa reload halaman, serta memungkinkan tampilan seperti loading, filter dinamis, dan notifikasi real-time yang membuat website lebih interaktif.

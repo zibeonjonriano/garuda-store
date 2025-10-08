@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block meta %}
 <title>Login - Garuda Store</title>
+<script src="{% static 'js/toast.js' %}"></script>
 {% endblock meta %}
 
 {% block content %}
@@ -13,83 +15,58 @@
         <p class="text-white">Welcome back to Garuda Store</p>
       </div>
 
-      <!-- Form Errors Display -->
-      {% if form.non_field_errors %}
-        <div class="mb-6">
-          {% for error in form.non_field_errors %}
-            <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
-              {{ error }}
-            </div>
-          {% endfor %}
+      <!-- Error Message Container -->
+      <div id="error-container" class="hidden mb-6">
+        <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
+          <span id="error-message"></span>
         </div>
-      {% endif %}
+      </div>
 
-      {% if form.errors %}
-        <div class="mb-6">
-          {% for field, errors in form.errors.items %}
-            {% if field != '__all__' %}
-              {% for error in errors %}
-                <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                  <strong>{{ field|title }}:</strong> {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <form method="POST" action="" class="space-y-6">
+      <form id="loginForm" class="space-y-6">
         {% csrf_token %}
         
         <div>
-          <label for="username" class="block text-sm font-medium text-white mb-2">Username</label>
+          <label for="username" class="block text-sm font-medium text-white mb-2">
+            Username <span class="text-red-500">*</span>
+          </label>
           <input 
             id="username" 
             name="username" 
             type="text" 
             required 
-            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors bg-gray-800 text-white placeholder-white" 
-            placeholder="Enter your username">
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors bg-gray-800 text-white placeholder-gray-400" 
+            placeholder="Enter your username"
+            autocomplete="username">
         </div>
 
         <div>
-          <label for="password" class="block text-sm font-medium text-white mb-2">Password</label>
+          <label for="password" class="block text-sm font-medium text-white mb-2">
+            Password <span class="text-red-500">*</span>
+          </label>
           <input 
             id="password" 
             name="password" 
             type="password" 
             required 
-            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors bg-gray-800 text-white placeholder-white" 
-            placeholder="Enter your password">
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors bg-gray-800 text-white placeholder-gray-400" 
+            placeholder="Enter your password"
+            autocomplete="current-password">
         </div>
 
         <button 
           type="submit" 
-          class="w-full bg-[#b3f300] text-black font-medium py-3 px-4 rounded-md hover:bg-[#bfd59f] transition-colors">
-          Sign In
+          id="loginButton"
+          class="w-full bg-[#b3f300] text-black font-medium py-3 px-4 rounded-md hover:bg-[#bfd59f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          <span id="buttonText">Sign In</span>
+          <span id="buttonLoader" class="hidden">
+            <svg class="animate-spin h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            Signing in...
+          </span>
         </button>
       </form>
-
-      <!-- Messages Display -->
-      {% if messages %}
-        <div class="mt-6">
-          {% for message in messages %}
-            <div 
-              class="
-                px-4 py-3 rounded-md text-sm border
-                {% if message.tags == 'success' %}
-                  bg-green-50 border-green-200 text-green-700
-                {% elif message.tags == 'error' %}
-                  bg-red-50 border-red-200 text-red-700
-                {% else %}
-                  bg-gray-50 border-gray-200 text-gray-700
-                {% endif %}
-              ">
-              {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
 
       <div class="mt-6 text-center pt-6 border-t border-gray-200">
         <p class="text-white text-sm">
@@ -102,4 +79,149 @@
     </div>
   </div>
 </div>
+
+<script>
+// Ensure toast functions are available
+if (typeof showSuccessToast === 'undefined') {
+    console.error('Toast functions not loaded! Loading inline...');
+    
+    // Inline toast functions as fallback
+    window.showSuccessToast = function(title, message, duration = 3000) {
+        showToast(title, message, 'success', duration);
+    };
+    
+    window.showErrorToast = function(title, message, duration = 3000) {
+        showToast(title, message, 'error', duration);
+    };
+    
+    window.showWarningToast = function(title, message, duration = 3000) {
+        showToast(title, message, 'warning', duration);
+    };
+    
+    window.showInfoToast = function(title, message, duration = 3000) {
+        showToast(title, message, 'info', duration);
+    };
+    
+    window.showToast = function(title, message, type = 'info', duration = 3000) {
+        const toastComponent = document.getElementById('toast-component');
+        const toastTitle = document.getElementById('toast-title');
+        const toastMessage = document.getElementById('toast-message');
+        const toastIcon = document.getElementById('toast-icon');
+
+        if (!toastComponent || !toastTitle || !toastMessage || !toastIcon) {
+            console.error('Toast component not found in DOM');
+            alert(title + ': ' + message); // Fallback to alert
+            return;
+        }
+
+        toastTitle.textContent = title;
+        toastMessage.textContent = message;
+
+        const toastConfig = {
+            success: { bgColor: 'bg-green-100', textColor: 'text-green-800', borderColor: 'border-green-300', icon: '✅' },
+            error: { bgColor: 'bg-red-100', textColor: 'text-red-800', borderColor: 'border-red-300', icon: '❌' },
+            warning: { bgColor: 'bg-yellow-100', textColor: 'text-yellow-800', borderColor: 'border-yellow-300', icon: '⚠️' },
+            info: { bgColor: 'bg-blue-100', textColor: 'text-blue-800', borderColor: 'border-blue-300', icon: 'ℹ️' }
+        };
+
+        const config = toastConfig[type] || toastConfig.info;
+
+        toastComponent.className = 'fixed bottom-8 right-8 p-4 px-8 rounded-xl shadow-xl z-50 transition-all duration-300 flex items-center gap-4 border-2';
+        toastComponent.classList.add(config.bgColor, config.textColor, config.borderColor);
+        toastIcon.textContent = config.icon;
+
+        requestAnimationFrame(() => {
+            toastComponent.classList.remove('opacity-0', 'translate-y-64');
+            toastComponent.classList.add('opacity-100', 'translate-y-0');
+        });
+
+        setTimeout(() => {
+            toastComponent.classList.remove('opacity-100', 'translate-y-0');
+            toastComponent.classList.add('opacity-0', 'translate-y-64');
+        }, duration);
+    };
+}
+
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorContainer = document.getElementById('error-container');
+    const errorMessage = document.getElementById('error-message');
+    const loginButton = document.getElementById('loginButton');
+    const buttonText = document.getElementById('buttonText');
+    const buttonLoader = document.getElementById('buttonLoader');
+    
+    // Hide previous errors
+    errorContainer.classList.add('hidden');
+    
+    // Disable button and show loader
+    loginButton.disabled = true;
+    buttonText.classList.add('hidden');
+    buttonLoader.classList.remove('hidden');
+    
+    try {
+        const response = await fetch("{% url 'main:login_ajax' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show success toast
+            showSuccessToast(
+                'Login Successful!',
+                data.message,
+                2000
+            );
+            
+            // Redirect after short delay
+            setTimeout(() => {
+                window.location.href = data.redirect_url;
+            }, 1500);
+        } else {
+            // Show error in form
+            errorMessage.textContent = data.message;
+            errorContainer.classList.remove('hidden');
+            
+            // Show error toast
+            showErrorToast(
+                'Login Failed',
+                data.message,
+                3000
+            );
+            
+            // Re-enable button
+            loginButton.disabled = false;
+            buttonText.classList.remove('hidden');
+            buttonLoader.classList.add('hidden');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        
+        errorMessage.textContent = 'An unexpected error occurred. Please try again.';
+        errorContainer.classList.remove('hidden');
+        
+        showErrorToast(
+            'Error!',
+            'An unexpected error occurred. Please try again.',
+            3000
+        );
+        
+        // Re-enable button
+        loginButton.disabled = false;
+        buttonText.classList.remove('hidden');
+        buttonLoader.classList.add('hidden');
+    }
+});
+</script>
 {% endblock content %}

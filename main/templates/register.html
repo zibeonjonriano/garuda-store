@@ -9,111 +9,208 @@
   <div class="min-h-screen bg-[#232323] flex items-center justify-center p-8">
     <div class="max-w-md w-full relative z-10">
       <div class="bg-[#010101] border border-gray-200 rounded-lg p-8 shadow-sm">
-      <div class="text-center mb-8">
-        <h2 class="text-2xl font-semibold text-white mb-2">Join Us</h2>
-        <p class="text-white">Create your Garuda Store account</p>
-      </div>
-
-      <!-- Form Errors Display -->
-      {% if form.non_field_errors %}
-        <div class="mb-6">
-          {% for error in form.non_field_errors %}
-            <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700">
-              {{ error }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      {% if form.errors %}
-        <div class="mb-6">
-          {% for field, errors in form.errors.items %}
-            {% if field != '__all__' %}
-              {% for error in errors %}
-                <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                  <strong>{{ field|title }}:</strong> {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <form method="POST" action="" class="space-y-5">
-        {% csrf_token %}
-        
-        <div>
-          <label for="username" class="block text-sm font-medium text-white mb-2">Username</label>
-          <input 
-            id="username" 
-            name="username" 
-            type="text" 
-            required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200 bg-gray-800 text-white placeholder-white" 
-            placeholder="Choose a username">
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-semibold text-white mb-2">Join Us</h2>
+          <p class="text-white">Create your Garuda Store account</p>
         </div>
 
-        <div>
-          <label for="password1" class="block text-sm font-medium text-white mb-2">Password</label>
-          <input 
-            id="password1" 
-            name="password1" 
-            type="password" 
-            required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200 bg-gray-800 text-white placeholder-white" 
-            placeholder="Create a password">
+        <!-- Error Message Container -->
+        <div id="error-container" class="hidden mb-6">
+          <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700">
+            <span id="error-message"></span>
+          </div>
         </div>
 
-        <div>
-          <label for="password2" class="block text-sm font-medium text-white mb-2">Confirm Password</label>
-          <input 
-            id="password2" 
-            name="password2" 
-            type="password" 
-            required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200 bg-gray-800 text-white placeholder-white" 
-            placeholder="Confirm your password">
+        <form id="registerForm" class="space-y-5">
+          {% csrf_token %}
+          
+          <div>
+            <label for="username" class="block text-sm font-medium text-white mb-2">
+              Username <span class="text-red-500">*</span>
+            </label>
+            <input 
+              id="username" 
+              name="username" 
+              type="text" 
+              required 
+              minlength="3"
+              class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200 bg-gray-800 text-white placeholder-gray-400" 
+              placeholder="Choose a username"
+              autocomplete="username">
+            <p class="text-xs text-gray-400 mt-1">At least 3 characters</p>
+          </div>
+
+          <div>
+            <label for="password1" class="block text-sm font-medium text-white mb-2">
+              Password <span class="text-red-500">*</span>
+            </label>
+            <input 
+              id="password1" 
+              name="password1" 
+              type="password" 
+              required 
+              minlength="8"
+              class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200 bg-gray-800 text-white placeholder-gray-400" 
+              placeholder="Create a password"
+              autocomplete="new-password">
+            <p class="text-xs text-gray-400 mt-1">At least 8 characters</p>
+          </div>
+
+          <div>
+            <label for="password2" class="block text-sm font-medium text-white mb-2">
+              Confirm Password <span class="text-red-500">*</span>
+            </label>
+            <input 
+              id="password2" 
+              name="password2" 
+              type="password" 
+              required 
+              minlength="8"
+              class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200 bg-gray-800 text-white placeholder-gray-400" 
+              placeholder="Confirm your password"
+              autocomplete="new-password">
+          </div>
+
+          <button 
+            type="submit" 
+            id="registerButton"
+            class="w-full bg-[#b3f300] text-black font-medium py-3 px-4 rounded hover:bg-[#bfd59f] focus:outline-none focus:ring-2 focus:ring-[#bfd59f] focus:ring-offset-2 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span id="buttonText">Create Account</span>
+            <span id="buttonLoader" class="hidden">
+              <svg class="animate-spin h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              Creating account...
+            </span>
+          </button>
+        </form>
+
+        <div class="mt-6 text-center">
+          <p class="text-gray-500 text-sm">
+            Already have an account? 
+            <a href="{% url 'main:login' %}" class="text-[#b3f300] hover:text-[#bfd59f] font-medium">
+              Sign In
+            </a>
+          </p>
         </div>
-
-        <button 
-          type="submit" 
-          class="w-full bg-[#b3f300] text-black font-medium py-3 px-4 rounded hover:bg-[#bfd59f] focus:outline-none focus:ring-2 focus:ring-[#bfd59f]
-           focus:ring-offset-2 transition duration-200">
-          Create Account
-        </button>
-      </form>
-
-      <!-- Messages Display -->
-      {% if messages %}
-        <div class="mt-6">
-          {% for message in messages %}
-            <div 
-              class="
-                px-4 py-3 rounded text-sm border
-                {% if message.tags == 'success' %}
-                  bg-green-50 border-green-200 text-green-700
-                {% elif message.tags == 'error' %}
-                  bg-red-50 border-red-200 text-red-700
-                {% else %}
-                  bg-gray-50 border-gray-200 text-gray-700
-                {% endif %}
-              ">
-              {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <div class="mt-6 text-center">
-        <p class="text-gray-500 text-sm">
-          Already have an account? 
-          <a href="{% url 'main:login' %}" class="text-[#b3f300] hover:text-[#bfd59f] font-medium">
-            Sign In
-          </a>
-        </p>
-      </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const username = document.getElementById('username').value;
+    const password1 = document.getElementById('password1').value;
+    const password2 = document.getElementById('password2').value;
+    const errorContainer = document.getElementById('error-container');
+    const errorMessage = document.getElementById('error-message');
+    const registerButton = document.getElementById('registerButton');
+    const buttonText = document.getElementById('buttonText');
+    const buttonLoader = document.getElementById('buttonLoader');
+    
+    // Hide previous errors
+    errorContainer.classList.add('hidden');
+    
+    // Client-side validation
+    if (password1 !== password2) {
+        errorMessage.textContent = 'Passwords do not match';
+        errorContainer.classList.remove('hidden');
+        showWarningToast('Validation Error', 'Passwords do not match', 3000);
+        return;
+    }
+    
+    if (password1.length < 8) {
+        errorMessage.textContent = 'Password must be at least 8 characters long';
+        errorContainer.classList.remove('hidden');
+        showWarningToast('Validation Error', 'Password too short', 3000);
+        return;
+    }
+    
+    // Disable button and show loader
+    registerButton.disabled = true;
+    buttonText.classList.add('hidden');
+    buttonLoader.classList.remove('hidden');
+    
+    try {
+        const response = await fetch("{% url 'main:register_ajax' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password1: password1,
+                password2: password2
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show success toast
+            showSuccessToast(
+                'Registration Successful!',
+                data.message,
+                2500
+            );
+            
+            // Redirect to login after short delay
+            setTimeout(() => {
+                window.location.href = data.redirect_url;
+            }, 2000);
+        } else {
+            // Show error in form
+            errorMessage.textContent = data.message;
+            errorContainer.classList.remove('hidden');
+            
+            // Show error toast
+            showErrorToast(
+                'Registration Failed',
+                data.message,
+                3000
+            );
+            
+            // Re-enable button
+            registerButton.disabled = false;
+            buttonText.classList.remove('hidden');
+            buttonLoader.classList.add('hidden');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        
+        errorMessage.textContent = 'An unexpected error occurred. Please try again.';
+        errorContainer.classList.remove('hidden');
+        
+        showErrorToast(
+            'Error!',
+            'An unexpected error occurred. Please try again.',
+            3000
+        );
+        
+        // Re-enable button
+        registerButton.disabled = false;
+        buttonText.classList.remove('hidden');
+        buttonLoader.classList.add('hidden');
+    }
+});
+
+// Real-time password match validation
+document.getElementById('password2').addEventListener('input', function() {
+    const password1 = document.getElementById('password1').value;
+    const password2 = this.value;
+    
+    if (password2.length > 0 && password1 !== password2) {
+        this.classList.add('border-red-500');
+        this.classList.remove('border-gray-300');
+    } else {
+        this.classList.remove('border-red-500');
+        this.classList.add('border-gray-300');
+    }
+});
+</script>
 {% endblock content %}
