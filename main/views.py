@@ -216,33 +216,50 @@ def delete_product(request, id):
     product.delete()
     return HttpResponseRedirect(reverse('main:show_main'))
 
+
 @csrf_exempt
 @require_POST
+@login_required(login_url='/login') # Tambahkan decorator login_required untuk keamanan
 def add_product_entry_ajax(request):
-    name = strip_tags(request.POST.get("name")) # strip HTML tags!
-    price = request.POST.get("price")
-    description = strip_tags(request.POST.get("description")) # strip HTML tags!
-    category = request.POST.get("category")
-    thumbnail = request.POST.get("thumbnail")
-    size = request.POST.get("size")
-    stock = request.POST.get("stock")
-    is_featured = request.POST.get("is_featured") == 'on'  # checkbox handling
-    user = request.user
+    try:
+        # Mengambil data dari request.POST (FormData dari frontend)
+        name = strip_tags(request.POST.get("name"))
+        price = request.POST.get("price")
+        description = strip_tags(request.POST.get("description"))
+        category = request.POST.get("category")
+        thumbnail = request.POST.get("thumbnail")
+        size = request.POST.get("size")
+        stock = request.POST.get("stock")
+        is_featured = request.POST.get("is_featured") == 'on'
+        user = request.user
+        
+        # Validasi dasar
+        if not name or not price:
+             return JsonResponse({'success': False, 'message': 'Name and price are required.'}, status=400)
 
-    new_product = Product(
-        name=name, 
-        price=price,
-        description=description,
-        category=category,
-        thumbnail=thumbnail,
-        size=size,
-        stock=stock,
-        is_featured=is_featured,
-        user=user
-    )
-    new_product.save()
-
-    return HttpResponse(b"CREATED", status=201)
+        # Membuat dan menyimpan Product
+        new_product = Product.objects.create(
+            name=name, 
+            price=int(price), # Konversi ke integer
+            description=description,
+            category=category,
+            thumbnail=thumbnail,
+            size=size,
+            stock=int(stock),  # Konversi ke integer
+            is_featured=is_featured,
+            user=user
+        )
+        
+        #  KEMBALIKAN JSON RESPONSE (Wajib untuk AJAX) 
+        return JsonResponse({
+            'success': True,
+            'message': f"Product '{new_product.name}' successfully added!", # Pesan untuk Toast
+            'product_id': new_product.id
+        }, status=201) 
+        
+    except Exception as e:
+        # Penanganan error jika konversi int gagal atau error database
+        return JsonResponse({'success': False, 'message': f"Failed to save product: {str(e)}"}, status=500)
 
 
 @csrf_exempt
@@ -253,21 +270,29 @@ def login_ajax(request):
         username = data.get('username')
         password = data.get('password')
         
-        if not username or not password:
-            return JsonResponse({
-                'success': False,
-                'message': 'Username and password are required'
-            }, status=400)
+        # ... (Validasi input) ...
         
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
             login(request, user)
-            return JsonResponse({
+            
+            # --- START PERBAIKAN AJAX COOKIE ---
+            # 1. Buat HttpResponse sebagai dasar untuk JsonResponse
+            response = JsonResponse({
                 'success': True,
                 'message': f'Welcome back, {user.username}!',
-                'redirect_url': '/'
+                'redirect_url': reverse("main:show_main") # Gunakan reverse() untuk konsistensi
             })
+            
+            # 2. Atur Cookie pada objek HttpResponse ini
+            # Gunakan format waktu yang sama seperti di fungsi login_user konvensional
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            
+            # 3. Kembalikan objek HttpResponse yang sudah membawa Cookie
+            return response
+            # --- END PERBAIKAN AJAX COOKIE ---
+            
         else:
             return JsonResponse({
                 'success': False,
@@ -350,3 +375,71 @@ def register_ajax(request):
             'success': False,
             'message': str(e)
         }, status=500)
+
+
+@csrf_exempt
+@require_POST
+@login_required(login_url='/login')
+def logout_ajax(request):
+    logout(request)
+    
+    # Hapus cookie last_login di respons JSON
+    response = JsonResponse({
+        'success': True,
+        'message': 'Logout successful!',
+        'redirect_url': reverse('main:login')
+    })
+    response.delete_cookie('last_login')
+    
+    # Kembalikan JsonResponse yang sudah membawa instruksi hapus cookie
+    return response 
+
+@csrf_exempt
+@require_POST
+@login_required(login_url='/login')
+def delete_product_ajax(request, id):
+    try:
+        # 1. Cari produk dan pastikan user adalah pemilik
+        product = get_object_or_404(Product, pk=id, user=request.user) 
+        product_name = product.name
+        
+        # 2. Hapus produk
+        product.delete()
+        
+        # 3. Kembalikan respons sukses JSON
+        return JsonResponse({
+            'success': True,
+            'message': f"Product '{product_name}' deleted successfully!"
+        }, status=200)
+        
+    except Product.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Product not found or unauthorized.'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f"Error deleting product: {str(e)}"}, status=500)
+
+@csrf_exempt
+@require_POST
+@login_required(login_url='/login')
+def update_product_ajax(request, id):
+    try:
+        product = get_object_or_404(Product, pk=id, user=request.user)
+        # Gunakan request.POST (FormData)
+        form = ProductForm(request.POST, instance=product) 
+        
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                'success': True,
+                'message': f"Product '{product.name}' updated successfully!" # 🔥 TOAST MESSAGE 🔥
+            }, status=200)
+        else:
+            errors = dict(form.errors.items()) # Ambil error spesifik
+            return JsonResponse({'success': False, 
+                                 'message': 'Validation Failed. Please check the form.',
+                                 'errors': errors}, 
+                                status=400)
+
+    except Product.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Product not found or unauthorized.'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f"Error updating product: {str(e)}"}, status=500)

@@ -184,11 +184,13 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
                 2000
             );
             
-            // Redirect after short delay
+            // Redirect setelah short delay
             setTimeout(() => {
-                window.location.href = data.redirect_url;
+                // Karena respons sukses dari server sudah membawa cookie, 
+                // kita hanya perlu melakukan redirect ke halaman utama.
+                window.location.href = data.redirect_url; // data.redirect_url sudah di-set di views.py
             }, 1500);
-        } else {
+        }  else {
             // Show error in form
             errorMessage.textContent = data.message;
             errorContainer.classList.remove('hidden');

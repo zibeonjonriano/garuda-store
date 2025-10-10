@@ -3,39 +3,20 @@
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center">
           <h1 class="text-xl font-semibold text-gray-50">
-            <span class="text-green-500">Garuda</span> Store
+            <span class="text-[#b3f300]">Garuda</span> Store
           </h1>
         </div>
         
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center space-x-8">
-          <a href="/" class="text-gray-50 hover:text-green-500 font-medium transition-colors">
+          <a href="/" class="text-gray-50 hover:text-[#bfd596] font-medium transition-colors">
             Home
           </a>
-          <a href="{% url 'main:add_product' %}" class="text-white hover:text-green-500 font-medium transition-colors">
+          <a href="{% url 'main:add_product' %}" class="text-white hover:text-[#bfd596] font-medium transition-colors">
             Add Product
           </a>
         </div>
 
-        <div class="hidden md:flex items-center space-x-4">
-
-        <!-- Owner Filter -->
-        <form method="GET" action="{% url 'main:show_main' %}" class="flex items-center space-x-2 ">
-            <select name="owner" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm bg-white">
-            <option value="all" {% if current_owner == "all" %}selected{% endif %}>All Products</option>
-            <option value="my" {% if current_owner == "my" %}selected{% endif %}>My Products</option>
-            </select>
-
-            <!-- Category Filter -->
-            <select name="category" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm bg-white">
-            <option value="all" {% if current_category == "all" %}selected{% endif %}>All Categories</option>
-            {% for key, value in categories %}
-                <option value="{{ key }}" {% if current_category == key %}selected{% endif %}>{{ value }}</option>
-            {% endfor %}
-            </select>
-        </form>
-
-    </div>
         
         <!-- Desktop User Section -->
         <div class="hidden md:flex items-center space-x-6">
@@ -44,9 +25,9 @@
               <div class="text-sm font-medium text-white">{{ name|default:user.username }}</div>
               <div class="text-xs text-white">{{ student_name|default:"Student" }} - {{ class_name|default:"Class" }}</div>
             </div>
-            <a href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">
+            <button onclick="logoutAjax()" class="text-red-600 hover:text-red-700 font-medium transition-colors">
               Logout
-            </a>
+            </button>
           {% else %}
             <a href="{% url 'main:login' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
               Login
@@ -59,7 +40,7 @@
         
         <!-- Mobile Menu Button -->
         <div class="md:hidden flex items-center">
-          <button class="mobile-menu-button p-2 text-green-500 hover:text-green-200 transition-colors">
+          <button class="mobile-menu-button p-2 text-[#b3f300] hover:text-[#bfd59f] transition-colors">
             <span class="sr-only">Open menu</span>
             <div class="w-6 h-6 flex flex-col justify-center items-center">
               <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm"></span>
@@ -71,14 +52,14 @@
       </div>
     </div>
     <!-- Mobile Menu -->
-    <div class="mobile-menu hidden md:hidden bg-white border-t border-gray-200">
+    <div class="mobile-menu hidden md:hidden bg-[#232323] border-t border-white">
       <div class="px-6 py-4 space-y-4">
         <!-- Mobile Navigation Links -->
         <div class="space-y-1">
-            <a href="/" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
+            <a href="/" class="block  text-white hover:text-[#bfd59f] font-medium py-3 transition-colors">
                 Home
             </a>
-            <a href="{% url 'main:add_product' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
+            <a href="{% url 'main:add_product' %}" class="block  text-white hover:text-[#bfd59f] font-medium py-3 transition-colors">
                 Add Product
             </a>
 
@@ -86,7 +67,7 @@
             <!-- Category Filter as Links -->
             {% for key, value in categories %}
                 <a href="{% url 'main:show_main' %}?category={{ key }}{% if current_owner != 'all' %}&owner={{ current_owner }}{% endif %}" 
-                class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors {% if current_category == key %}font-bold{% endif %}">
+                class="block text-white hover:text-[#bfd59f] font-medium py-3 transition-colors {% if current_category == key %}font-bold{% endif %}">
                 {{ value }}
                 </a>
             {% endfor %}
@@ -96,12 +77,12 @@
         <div class="border-t border-gray-200 pt-4">
           {% if user.is_authenticated %}
             <div class="mb-4">
-              <div class="font-medium text-gray-900">{{ name|default:user.username }}</div>
-              <div class="text-sm text-gray-500">{{ student_name|default:"Student" }} - {{ class_name|default:"Class" }}</div>
+              <div class="font-medium text-[#b3f300]">{{ name|default:user.username }}</div>
+              <div class="text-sm text-white">{{ student_name|default:"Student" }} - {{ class_name|default:"Class" }}</div>
             </div>
-            <a href="{% url 'main:logout' %}" class="block text-red-400 hover:text-red-700 font-medium py-3 transition-colors">
+            <button onclick="logoutAjax()" class="block text-red-400 hover:text-red-700 font-medium py-3 transition-colors">
               Logout
-            </a>
+            </button>
           {% else %}
             <div class="space-y-3">
               <a href="{% url 'main:login' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">

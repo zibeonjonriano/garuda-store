@@ -7,38 +7,80 @@
 
 {% block content %}
 {% include 'navbar.html' %}
-<div class="bg-gray-50 w-full pt-16 min-h-screen">
+<div class="bg-[#232323] w-full pt-16 min-h-screen">
 
   {% include 'modal.html' %}
+
+    <div id="delete-modal" class="fixed inset-0 z-50 overflow-y-auto bg-gray-900 bg-opacity-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full">
+              <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div class="sm:flex sm:items-start">
+                      <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                      </div>
+                      <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                          <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Hapus Produk Ini?</h3>
+                          <div class="mt-2">
+                              <p class="text-sm text-gray-500">Anda yakin ingin menghapus produk <strong id="product-to-delete-name"></strong>? Aksi ini dapat dibatalkan.</p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <button type="button" id="confirmDeleteButton" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 sm:ml-3 sm:w-auto sm:text-sm">
+                      Ya, Hapus
+                  </button>
+                  <button type="button" onclick="closeModal('delete-modal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">
+                      Batal
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
    <!-- Header Section -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Your Football Merch Hub</h1>
-      <p class="text-gray-600"> Official collections, all in one place</p>
+      <h1 class="text-4xl font-bold tracking-tight text-white">Your Football Merch Hub</h1>
+      <p class="mt-2 text-lg text-white"> Official collections, all in one place</p>
     </div>
-  <!-- Button to open modal -->
-    <button onclick="showModal()" class="inline-flex items-center px-4 py-2 bg-white text-green-600 font-semibold outline outline-2 outline-green-600 outline-offset-[-2px] rounded-md hover:bg-green-600 hover:text-white transition-colors mb-4">
-      Add Product by AJAX
-    </button>
+
+    <div class="flex items-center justify-between mb-4">
+      <!-- Button to open modal -->
+      <button onclick="openCreateModal()" class="inline-flex items-center px-4 py-2 text-white font-normal outline outline-[#b3f300] rounded-md outline-1 hover:outline-2 hover:outline-[#bfd596] hover:text-[#bfd596] transition-colors">
+        Add Product by AJAX
+      </button>
+      <button onclick="fetchProductFromServer(); showInfoToast('Refreshing list...', '', 1000)" class="inline-flex items-center px-4 py-2 bg-gray-500 text-gray-50 font-medium rounded-md hover:bg-gray-400 hover:text-gray-50 transition-colors">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.582m-15.356-2A8.001 8.001 0 0019.418 15m0 0H15"></path></svg>
+        Refresh List
+      </button>
+    </div>
 
     <!-- Filter Section -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
-      <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a id="filter-all" class="bg-green-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-700">
-          All Product
-        </a>
-        <a id="filter-my" class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-600 hover:text-white">
-          My Product
-        </a>
-      </div>
-      {% if user.is_authenticated %}
-        <div class="text-sm text-gray-500">Last login: {{ last_login }}</div>
-      {% endif %}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-[#232323] rounded-lg border border-[#b3f300] p-4">
+        
+        <form method="GET" action="{% url 'main:show_main' %}" class="flex items-center space-x-4 mb-4 sm:mb-0">
+            <select name="owner" onchange="this.form.submit()" class="border rounded px-4 py-2 text-sm bg-[#010101] text-white border-[#b3f300] focus:ring-[#b3f300] focus:border-[#b3f300] transition-colors">
+                <option value="all" {% if current_owner == "all" %}selected{% endif %}>All Products</option>
+                <option value="my" {% if current_owner == "my" %}selected{% endif %}>My Products</option>
+            </select>
+
+            <select name="category" onchange="this.form.submit()" class="border rounded px-4 py-2 text-sm bg-[#010101] text-white border-[#b3f300] focus:ring-[#b3f300] focus:border-[#b3f300] transition-colors">
+                <option value="all" {% if current_category == "all" %}selected{% endif %}>All Categories</option>
+                {% for key, value in categories %}
+                    <option value="{{ key }}" {% if current_category == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </form>
+
+        {% if user.is_authenticated %}
+            <div class="text-sm text-white hidden sm:block">Last login: {{ last_login }}</div>
+        {% endif %}
     </div>
 
     <!-- Loading State -->
     <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
-      <svg class="animate-spin h-8 w-8 text-green-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <svg class="animate-spin h-8 w-8 text-[#b3f300] inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
       </svg>
@@ -52,13 +94,13 @@
     <div id="grid" class="hidden"></div>
 
     <!-- Empty State -->
-    <div id="empty" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+    <div id="empty" class="bg-[#010101] rounded-lg border border-gray-200 p-12 text-center hidden">
       <div class="w-32 h-32 mx-auto mb-4">
         <img src="{% static 'image/no-product.png' %}" alt="No product available" class="w-full h-full object-contain">
       </div>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">No product found</h3>
-      <p class="text-gray-500 mb-6">Be the first to sell your football stuff with the community.</p>
-      <a href="{% url 'main:add_product' %}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+      <h3 class="text-lg font-medium text-[#b3f300] mb-2">No product found</h3>
+      <p class="text-gray-300 mb-6">Be the first to sell your football stuff with the community.</p>
+      <a href="{% url 'main:add_product' %}" class="inline-flex items-center px-4 py-2 bg-[#b3f300] text-[#bsd59f] rounded-md hover:bg-[#] transition-colors">
         Add Product
       </a>
     </div>
@@ -75,25 +117,10 @@ const loadingSpinner = document.getElementById('loading');
 const errorMessage = document.getElementById('error');
 const emptyStateDisplay = document.getElementById('empty');
 const productGridContainer = document.getElementById('grid');
-const showAllProductButton = document.getElementById('filter-all');
-const showMyProductButton = document.getElementById('filter-my');
 
 // State Variables
-let activeFilter = 'all';
 let allProductData = [];
 
-// Update filter button appearance
-function updateFilterButtonsAppearance() {
-  if (!showAllProductButton || !showMyProductButton) return;
-  
-  if (activeFilter === 'all') {
-    showAllProductButton.className = 'bg-green-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-700';
-    showMyProductButton.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-600 hover:text-white';
-  } else {
-    showMyProductButton.className = 'bg-green-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-700';
-    showAllProductButton.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-600 hover:text-white';
-  }
-}
 
 // Show/hide page sections
 function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
@@ -127,7 +154,7 @@ function buildProductCardElement(productItem) {
   console.log('Category value:', productItem.category); // Debug: lihat nilai category
  
   const articleElement = document.createElement('article');
-  articleElement.className = 'bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full';
+  articleElement.className = 'bg-[#010101] rounded-lg  hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full';
 
   const detailLink =  `/products/${productItem.id}/`;
   const editLink = `/products/${productItem.id}/edit`;
@@ -154,10 +181,15 @@ function buildProductCardElement(productItem) {
     ? `<span class='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800'>Hot</span>` 
     : '';
 
+  
+  const productJsonString = JSON.stringify(productItem).replace(/'/g, '&#39;'); // Mengganti kutip tunggal dengan HTML entity
+  const safeProductName = productItem.name.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
   const editDeleteButtons = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(productItem.user_id)
     ? `<div class='flex space-x-2'>
-        <a href='${editLink}' class='text-gray-600 hover:text-gray-700 text-sm transition-colors'>Edit</a>
-        <a href='${deleteLink}' class='text-red-600 hover:text-red-700 text-sm transition-colors' onclick='return confirm("Are you sure you want to delete this article?")'>Delete</a>
+        <a href='#' onclick='openEditModal(${productJsonString})' class='text-white hover:text-grey-500 text-sm transition-colors'>Edit</a>
+        
+        <a href='#' onclick='openDeleteConfirmation(${productItem.id}, "${safeProductName}")' class='text-red-600 hover:text-red-700 text-sm transition-colors'>Delete</a>
       </div>`
     : '';
 
@@ -165,7 +197,7 @@ function buildProductCardElement(productItem) {
     <div class="aspect-[16/9] relative overflow-hidden">
       ${thumbnailHtml}
       <div class="absolute top-3 left-3">
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-green-600 text-white">${categoryLabel}</span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#b3f300] text-green-800">${categoryLabel}</span>
       </div>
       <div class="absolute top-3 right-3 flex space-x-2">
         ${featuredBadge}
@@ -173,18 +205,18 @@ function buildProductCardElement(productItem) {
       </div>
     </div>
     <div class="p-5 flex flex-col flex-1">
-      <div class="flex items-center text-sm text-gray-500 mb-3">
+      <div class="flex items-center text-sm text-white mb-3">
         <time>${formattedDate}</time>
         <span class="mx-2">•</span>
         <span>${productItem.product_views} views</span>
       </div>
-      <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 leading-tight">
-        <a href="${detailLink}" class="hover:text-green-600 transition-colors">${productItem.name}</a>
+      <h3 class="text-lg font-semibold text-white mb-3 line-clamp-2 leading-tight">
+        <a href="${detailLink}" class="text-2xl hover:text-[#bfd59f] transition-colors">${productItem.name}</a>
       </h3>
-      <h3 class="text-2xl font-bold pb-4">Rp ${productItem.price}</h3>
-      <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">${productItem.description}</p>
+      <h3 class="text-xl font-bold pb-4 text-[#b3f300]">Rp ${productItem.price}</h3>
+      <p class="text-white text-sm leading-relaxed line-clamp-3 mb-4">${productItem.description}</p>
       <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-        <a href="${detailLink}" class="text-green-600 hover:text-green-700 font-medium text-sm transition-colors">Check Product</a>
+        <a href="${detailLink}" class="bg-[#b3f300] px-4 py-2 rounded-lg hover:text-green-700 hover:bg-[#bfd59f] font-medium text-sm transition-colors">Check Product →</a>
         ${editDeleteButtons}
       </div>
     </div>
@@ -204,13 +236,27 @@ function renderAllProductCards(productItems) {
 }
 
 // Filter and display Product
-function filterAndDisplayProduct() {
-  updateFilterButtonsAppearance();
+function filterAndDisplayProduct(currentOwner, currentCategory) {
   
-  const filteredProduct = activeFilter === 'all' 
-    ? allProductData 
-    : allProductData.filter(product => Number(product.user_id) === Number(CURRENT_USER_ID));
+  let filteredProduct = allProductData; 
+
+  // Filter berdasarkan OWNER (My Products)
+  if (currentOwner === 'my' && CURRENT_USER_ID) {
+     filteredProduct = filteredProduct.filter(product => 
+        // Pastikan user_id ada dan cocok dengan user yang login
+        Number(product.user_id) === Number(CURRENT_USER_ID)
+     );
+  }
   
+  // Filter berdasarkan CATEGORY
+  if (currentCategory && currentCategory !== 'all') {
+     filteredProduct = filteredProduct.filter(product => 
+        // Pastikan category ada dan cocok dengan yang dipilih
+        product.category && product.category.toLowerCase() === currentCategory.toLowerCase()
+     );
+  }
+
+  // Render hasilnya
   if (filteredProduct.length === 0) {
     displayPageSection({ showEmpty: true });
   } else {
@@ -219,12 +265,20 @@ function filterAndDisplayProduct() {
   }
 }
 
+
 // Fetch product data from server
+// main.html - Ganti fungsi fetchProductFromServer()
 async function fetchProductFromServer() {
   try {
     displayPageSection({ showLoading: true });
     
-    const response = await fetch(PRODUCT_API_ENDPOINT, {
+    // Ambil parameter filter dari URL saat ini
+    const urlParams = new URLSearchParams(window.location.search);
+    const ownerFilter = urlParams.get('owner') || 'all'; 
+    const categoryFilter = urlParams.get('category') || 'all';
+    
+    // URL fetch tetap ke endpoint yang mengembalikan SEMUA data
+    const response = await fetch(PRODUCT_API_ENDPOINT, { 
       headers: { 'Accept': 'application/json' },
     });
 
@@ -235,31 +289,24 @@ async function fetchProductFromServer() {
     const productData = await response.json();
     allProductData = productData || [];
     
-    filterAndDisplayProduct();
+    // Panggil fungsi filter dengan parameter yang didapat dari URL
+    filterAndDisplayProduct(ownerFilter, categoryFilter); 
   } catch (error) {
     console.error('Error loading product:', error);
     displayPageSection({ showError: true });
   }
 }
 
-// Event handlers
-function handleShowAllProductClick() {
-  activeFilter = 'all';
-  filterAndDisplayProduct();
-}
-
-function handleShowMyProductClick() {
-  activeFilter = 'my';
-  filterAndDisplayProduct();
-}
-
 // Initialize page
 function initializeProductPage() {
-  showAllProductButton.addEventListener('click', handleShowAllProductClick);
-  showMyProductButton.addEventListener('click', handleShowMyProductClick);
+  // Hapus listeners yang mencoba mengakses tombol yang sudah dihapus
+  // showAllProductButton.addEventListener('click', handleShowAllProductClick); 
+  // showMyProductButton.addEventListener('click', handleShowMyProductClick);
   
+  // Cukup panggil fungsi fetchProductFromServer()
   fetchProductFromServer();
 }
+
 
 // Start application
 initializeProductPage();
@@ -270,74 +317,192 @@ document.addEventListener('productAdded', function() {
     fetchProductFromServer();
 });
 
+// --- VARIABEL & FUNGSI UNTUK DELETE AJAX ---
+
+// Dapatkan DOM elements modal delete yang baru Anda tambahkan
+const deleteModal = document.getElementById('delete-modal');
+const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+const productToDeleteNameDisplay = document.getElementById('product-to-delete-name'); 
+// Dapatkan tombol Batal yang sudah ada di HTML:
+const cancelButton = deleteModal.querySelector('button[onclick="closeModal(\'delete-modal\')"]');
+
+let productToDeleteId = null; 
+let productToDeleteName = ''; 
+
+// Fungsi untuk menutup modal secara langsung
+function hideDeleteModal() {
+    deleteModal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+// 1. FUNGSI UNTUK MEMBUKA MODAL KONFIRMASI (Dipanggil dari Product Card)
+function openDeleteConfirmation(productId, productName) {
+    productToDeleteId = productId;
+    productToDeleteName = productName;
+    productToDeleteNameDisplay.textContent = productName; 
+
+    // **AKSI LANGSUNG MENAMPILKAN MODAL**
+    deleteModal.classList.remove('hidden'); 
+    document.body.style.overflow = 'hidden';
+}
+
+// 2. Event Listener untuk Tombol Batal
+// Karena Anda tidak ingin menggunakan closeModal(), kita tambahkan listener pengganti
+cancelButton.removeEventListener('click', hideDeleteModal); // Hapus listener lama (jika ada)
+cancelButton.addEventListener('click', hideDeleteModal);
 
 
-
-function buildNewsCardElement(item) {
-    const article = document.createElement('article');
-    article.className = 'bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full';
-
-    const linkDetail = `/products/${item.id}/`;
-    const linkEdit = `/products/${item.id}/edit`;
-    const linkDelete = `/products/${item.id}/delete`;
-
-    const name = DOMPurify.sanitize(item.name);
-    const description = DOMPurify.sanitize(item.description);
-    const category = DOMPurify.sanitize(item.category);
-    const thumbnail = DOMPurify.sanitize(item.thumbnail);
-    const createdAt = DOMPurify.sanitize(new Date(item.created_at).toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-    }));
-    const productViews = DOMPurify.sanitize(item.product_views);
-    const isFeatured = item.is_featured;
-    const isHot = productViews > 20;
-
-    const thumbnailHtml = DOMPurify.sanitize(
-        item.thumbnail ? `<img src='${thumbnail}' alt='${name}' class='w-full h-full object-cover'>` : `<div class='w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center'></div>`
-    );
-    const categoryLabel = DOMPurify.sanitize(getReadableCategoryName(category));
-    const featuredLabel = isFeatured ? DOMPurify.sanitize(`<span class='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800'>Featured</span>`) : '';
-    const hotLabel = isHot ? DOMPurify.sanitize(`<span class='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800'>Hot</span>`) : '';
-
-    const editDeleteHtml = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(item.user_id)
-        ? `<div class='flex space-x-2'>
-            <a href='${linkEdit}' class='text-gray-600 hover:text-gray-700 text-sm transition-colors'>Edit</a>
-            <a href='${linkDelete}' class='text-red-600 hover:text-red-700 text-sm transition-colors' onclick='return confirm("Are you sure you want to delete this article?")'>Delete</a>
-          </div>`
-        : '';
-
-    const cardHtml = `
-        <div class="aspect-[16/9] relative overflow-hidden">
-          ${thumbnailHtml}
-          <div class="absolute top-3 left-3">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-green-600 text-white">${categoryLabel}</span>
-          </div>
-          <div class="absolute top-3 right-3 flex space-x-2">
-            ${featuredLabel}
-            ${hotLabel}
-          </div>
-        </div>
-        <div class="p-5 flex flex-col flex-1">
-          <div class="flex items-center text-sm text-gray-500 mb-3">
-            <time>${createdAt}</time>
-            <span class="mx-2">•</span>
-            <span>${newsViews} views</span>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 leading-tight">
-            <a href="${linkDetail}" class="hover:text-green-600 transition-colors">${title}</a>
-          </h3>
-          <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">${content}</p>
-          <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-            <a href="${linkDetail}" class="text-green-600 hover:text-green-700 font-medium text-sm transition-colors">Read more</a>
-            ${editDeleteHtml}
-          </div>
-        </div>
-    `;
+// 3. EVENT LISTENER UNTUK EKSEKUSI DELETE AJAX
+confirmDeleteButton.addEventListener('click', async function() {
+    hideDeleteModal(); // Tutup modal saat aksi dimulai
     
-    article.innerHTML = cardHtml;
-    return article;
+    if (!productToDeleteId) return;
+
+    try {
+      
+        const csrfToken = getCookie('csrftoken'); 
+        
+        // Cek jika token ada, meskipun getCookie seharusnya selalu mengembalikan string
+        if (!csrfToken) {
+            showErrorToast('Error', 'CSRF Token not found for secure submission.');
+            return;
+        }
+        
+        const deleteEndpoint = `{% url 'main:delete_product_ajax' 0 %}`.replace('0', productToDeleteId);
+        
+        const response = await fetch(deleteEndpoint, {
+            method: 'POST', 
+            headers: {
+                // Kirim token melalui header HTTP
+                'X-CSRFToken': csrfToken, 
+                'Content-Type': 'application/json'
+            },
+        });
+        
+        const responseData = await response.json();
+        
+        if (response.ok && responseData.success) {
+            showSuccessToast('Deleted!', responseData.message || 'Product deleted successfully.');
+            await fetchProductFromServer(); 
+        } else {
+            showErrorToast('Failed!', responseData.message || 'Could not delete product.');
+        }
+    } catch (error) {
+        console.error('AJAX Delete Error:', error);
+        showErrorToast('Error!', 'An unexpected error occurred during deletion.');
+    } finally {
+        productToDeleteId = null;
+        productToDeleteName = '';
+    }
+});
+
+// Dapatkan elemen dari modal.html
+const productForm = document.getElementById('productForm');
+const submitProductButton = document.getElementById('submitProduct');
+const crudModalTitle = document.querySelector('#crudModal h3');
+
+
+// --- FUNGSI UNTUK MEMBUKA MODAL EDIT (UPDATE) ---
+function openEditModal(product) {
+    // 1. Set mode UPDATE
+    crudModalTitle.textContent = `Update Product: ${product.name}`;
+    submitProductButton.textContent = 'Update Product';
+    // Simpan teks tombol asli untuk state loading
+    submitProductButton.setAttribute('data-original-text', 'Update Product'); 
+    
+    // 2. Set action ke endpoint Update AJAX
+    const updateUrl = `{% url 'main:update_product_ajax' 0 %}`.replace('0', product.id);
+    productForm.action = updateUrl;
+
+    // 3. Isi form dengan data produk
+    document.getElementById('name').value = product.name;
+    document.getElementById('price').value = product.price;
+    document.getElementById('description').value = product.description;
+    document.getElementById('thumbnail').value = product.thumbnail;
+    document.getElementById('category').value = product.category;
+    document.getElementById('is_featured').checked = product.is_featured;
+    document.getElementById('size').value = product.size;
+    document.getElementById('stock').value = product.stock;
+
+    // 4. Tampilkan modal CRUD
+    showModal('crudModal');
+}
+
+// --- FUNGSI UNTUK MEMBUKA MODAL CREATE ---
+function openCreateModal() {
+    // 1. Reset form (agar bersih dari data Edit sebelumnya)
+    productForm.reset(); 
+    
+    // 2. Set mode CREATE
+    crudModalTitle.textContent = 'Add New Product';
+    submitProductButton.textContent = 'Upload Product';
+    submitProductButton.setAttribute('data-original-text', 'Upload Product'); 
+    
+    // 3. Set action ke endpoint Create AJAX
+    productForm.action = "{% url 'main:add_product_entry_ajax' %}";
+    
+    // 4. Tampilkan modal CRUD
+    showModal('crudModal');
+}
+
+
+
+
+// --- FUNGSI BARU: Mengambil nilai Cookie ---
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            // Cek apakah cookie dimulai dengan nama yang kita cari (csrftoken)
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// --- FUNGSI LOGOUT AJAX DENGAN TOAST (Diperbaiki) ---
+async function logoutAjax() {
+    // 1. Dapatkan CSRF Token dari cookie
+    const csrfToken = getCookie('csrftoken'); 
+
+    // Jika token tidak ditemukan, kita keluar (meski seharusnya selalu ada di halaman Django)
+    if (!csrfToken) {
+        showErrorToast('Error', 'CSRF Token not found. Please reload the page.');
+        return;
+    }
+    
+    try {
+        const response = await fetch("{% url 'main:logout_ajax' %}", { 
+            method: 'POST',
+            headers: {
+                // 2. Kirim token melalui header HTTP (Solusi untuk TypeError)
+                'X-CSRFToken': csrfToken, 
+                'Content-Type': 'application/json'
+            },
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            showSuccessToast('Logout Successful!', 'You have been logged out.', 2000);
+            
+            setTimeout(() => {
+                window.location.href = data.redirect_url || '/'; 
+            }, 1000);
+
+        } else {
+            showErrorToast('Logout Failed', data.message || 'Could not log you out.');
+        }
+
+    } catch (error) {
+        console.error("Logout AJAX Error:", error);
+        showErrorToast('Error', 'An unexpected network error occurred during logout.');
+    }
 }
 </script>
 {% endblock content %}

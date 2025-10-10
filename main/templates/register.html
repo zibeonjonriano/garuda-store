@@ -112,6 +112,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const registerButton = document.getElementById('registerButton');
     const buttonText = document.getElementById('buttonText');
     const buttonLoader = document.getElementById('buttonLoader');
+    const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
     
     // Hide previous errors
     errorContainer.classList.add('hidden');
@@ -141,11 +142,14 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+                
             },
             body: JSON.stringify({
                 username: username,
                 password1: password1,
-                password2: password2
+                password2: password2,
+                csrfmiddlewaretoken: csrfToken
             })
         });
         

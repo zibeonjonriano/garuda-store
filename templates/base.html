@@ -17,5 +17,12 @@
 
     {% include 'toast.html' %}
     {% include 'modal.html' %}
+      <script>
+        // Pastikan fungsi ini tersedia secara global (window.)
+        window.showSuccessToast = (title, message, duration = 3000) => showToast(title, message, 'success', duration);
+        window.showErrorToast = (title, message, duration = 3000) => showToast(title, message, 'error', duration);
+        window.showWarningToast = (title, message, duration = 3000) => showToast(title, message, 'warning', duration);
+        window.showInfoToast = (title, message, duration = 3000) => showToast(title, message, 'info', duration);
+    </script>
   </body>
 </html>
